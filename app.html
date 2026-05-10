@@ -805,7 +805,7 @@
             <div className="welcome-card">
               {step === 1 && (
                 <div className="step-content">
-                  <h2 className="step-title">🦉 হ্যালো সুপারস্টার!</h2>
+                  <h2 className="step-title">🦉 হ্যালো লিটল চ্যাম্প!</h2>
                   <p className="step-desc">তোমার নাম কী? আমি আমির, তোমার গণিতের পেঁচআ পাখি! 🌟</p>
                   <input className="name-input" placeholder="এখানে তোমার নাম লেখো... 😊" value={name} onChange={e => setName(e.target.value)} onKeyDown={e => e.key === 'Enter' && handleNameNext()} maxLength={30} autoFocus />
                   {nameError && <p className="input-error">{nameError}</p>}
