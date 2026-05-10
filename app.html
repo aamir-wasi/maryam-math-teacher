@@ -1,0 +1,1265 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>মরিয়ম গণিত শিক্ষক 🌟</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    /* ===== GLOBAL RESET & BASE ===== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; font-family: 'Hind Siliguri', 'Nunito', sans-serif; }
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background-attachment: fixed;
+    }
+    #root { min-height: 100vh; }
+    button { cursor: pointer; border: none; font-family: inherit; }
+    input { font-family: inherit; }
+    pre { white-space: pre-wrap; word-break: break-word; }
+
+    /* ===== SHARED BUTTONS ===== */
+    .btn-primary {
+      background: linear-gradient(135deg, #6C63FF, #3F3D56);
+      color: white; border: none; border-radius: 50px;
+      padding: 14px 28px; font-size: 1.1rem; font-weight: 700;
+      cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(108,99,255,0.4);
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(108,99,255,0.5); }
+    .btn-primary:active { transform: translateY(0); }
+    .btn-secondary {
+      background: rgba(255,255,255,0.2); color: white; border: 2px solid rgba(255,255,255,0.5);
+      border-radius: 50px; padding: 10px 20px; font-size: 0.95rem; font-weight: 700;
+      cursor: pointer; transition: all 0.3s; backdrop-filter: blur(4px);
+    }
+    .btn-secondary:hover { background: rgba(255,255,255,0.35); }
+    .btn-success {
+      background: linear-gradient(135deg, #6BCB77, #4CAF50);
+      color: white; border: none; border-radius: 50px;
+      padding: 14px 28px; font-size: 1.1rem; font-weight: 700;
+      cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(76,175,80,0.4);
+    }
+    .btn-success:hover { transform: translateY(-2px); }
+
+    /* ===== MASCOT ===== */
+    .mascot { font-size: 4rem; display: block; text-align: center; animation: bounce 2s infinite; }
+    .mascot-small { font-size: 1.8rem; }
+    @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+    @keyframes fadeInUp { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes fadeInDown { from{opacity:0;transform:translateY(-20px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes slideInLeft { from{opacity:0;transform:translateX(-30px)} to{opacity:1;transform:translateX(0)} }
+    @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.05)} }
+    @keyframes wiggle { 0%,100%{transform:rotate(0)} 25%{transform:rotate(-3deg)} 75%{transform:rotate(3deg)} }
+    @keyframes starPop { 0%{transform:scale(0) rotate(-30deg);opacity:0} 60%{transform:scale(1.3) rotate(10deg)} 100%{transform:scale(1) rotate(0);opacity:1} }
+    @keyframes confettiFall {
+      0%{transform:translateY(-10px) rotate(0deg);opacity:1}
+      100%{transform:translateY(100vh) rotate(720deg);opacity:0}
+    }
+    @keyframes spin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+
+    /* ===== PROGRESS BAR ===== */
+    .progress-bar-container {
+      background: rgba(255,255,255,0.3); border-radius: 20px; height: 12px; overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%; background: linear-gradient(90deg, #FFD93D, #FF6B6B);
+      border-radius: 20px; transition: width 0.5s ease;
+    }
+
+    /* ===== FEEDBACK TOAST ===== */
+    .feedback-toast {
+      position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+      padding: 12px 28px; border-radius: 50px; font-weight: 700; font-size: 1.1rem;
+      z-index: 1000; animation: fadeInDown 0.3s ease;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    }
+    .feedback-toast.correct { background: linear-gradient(135deg, #6BCB77, #4CAF50); color: white; }
+    .feedback-toast.wrong { background: linear-gradient(135deg, #FF6B6B, #ee5a24); color: white; }
+
+    /* ===== CONFETTI ===== */
+    .confetti-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 999; }
+    .confetti-piece { position: absolute; top: -10px; border-radius: 3px; animation: confettiFall linear forwards; }
+
+    /* ===== APP WRAPPER ===== */
+    .app { min-height: 100vh; }
+
+    /* ===== WELCOME SCREEN ===== */
+    .welcome-screen {
+      min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      padding: 20px; position: relative; overflow: hidden;
+    }
+    .bg-shapes { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+    .bg-shape { position: absolute; font-size: 2rem; opacity: 0.15; animation: float 6s ease-in-out infinite; }
+    @keyframes float { 0%,100%{transform:translateY(0) rotate(0)} 50%{transform:translateY(-20px) rotate(10deg)} }
+    .bg-shape-0{top:10%;left:5%;animation-delay:0s}
+    .bg-shape-1{top:20%;left:85%;animation-delay:.5s}
+    .bg-shape-2{top:60%;left:8%;animation-delay:1s}
+    .bg-shape-3{top:70%;left:80%;animation-delay:1.5s}
+    .bg-shape-4{top:40%;left:50%;animation-delay:2s}
+    .bg-shape-5{top:5%;left:40%;animation-delay:2.5s}
+    .bg-shape-6{top:80%;left:30%;animation-delay:3s}
+    .bg-shape-7{top:30%;left:20%;animation-delay:3.5s}
+    .bg-shape-8{top:85%;left:65%;animation-delay:4s}
+    .welcome-content { width: 100%; max-width: 500px; z-index: 1; }
+    .welcome-header { text-align: center; margin-bottom: 30px; animation: fadeInDown 0.6s ease; }
+    .welcome-title {
+      font-size: 2.8rem; font-weight: 900; color: white;
+      text-shadow: 0 4px 20px rgba(0,0,0,0.3); line-height: 1.1; margin-top: 10px;
+    }
+    .title-highlight { color: #FFD93D; }
+    .welcome-tagline { color: rgba(255,255,255,0.9); font-size: 1.1rem; margin-top: 8px; }
+    .welcome-card {
+      background: white; border-radius: 24px; padding: 32px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.2); animation: fadeInUp 0.6s ease 0.2s both;
+    }
+    .step-content { display: flex; flex-direction: column; gap: 16px; }
+    .step-title { font-size: 1.4rem; font-weight: 800; color: #3F3D56; }
+    .step-desc { color: #666; font-size: 1rem; }
+    .name-input {
+      width: 100%; padding: 14px 18px; border: 3px solid #e8e8f0; border-radius: 16px;
+      font-size: 1.1rem; font-weight: 600; outline: none; transition: border-color 0.3s;
+    }
+    .name-input:focus { border-color: #6C63FF; }
+    .input-error { color: #FF6B6B; font-size: 0.9rem; font-weight: 600; }
+    .welcome-btn { width: 100%; margin-top: 8px; }
+    .grade-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .grade-btn {
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
+      padding: 12px 8px; border: 3px solid #e8e8f0; border-radius: 16px;
+      background: white; cursor: pointer; transition: all 0.3s; font-size: 0.85rem;
+    }
+    .grade-btn:hover { border-color: #6C63FF; transform: translateY(-2px); }
+    .grade-btn-selected { border-color: #6C63FF; background: #f0effe; }
+    .grade-emoji { font-size: 1.8rem; }
+    .grade-label { font-weight: 800; color: #3F3D56; }
+    .grade-desc { color: #888; font-size: 0.75rem; }
+    .step-actions { display: flex; gap: 12px; }
+    .step-actions .btn-secondary { color: #666; border-color: #ddd; background: #f5f5f5; }
+    .step-actions .btn-primary { flex: 1; }
+    .features-row {
+      display: flex; justify-content: center; gap: 12px; margin-top: 20px;
+      flex-wrap: wrap; animation: fadeInUp 0.6s ease 0.4s both;
+    }
+    .feature-badge {
+      display: flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.2);
+      color: white; padding: 8px 14px; border-radius: 50px; font-weight: 700; font-size: 0.9rem;
+      backdrop-filter: blur(4px);
+    }
+
+    /* ===== DASHBOARD ===== */
+    .dashboard { min-height: 100vh; display: flex; flex-direction: column; }
+    .dash-topbar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 20px; background: rgba(255,255,255,0.15); backdrop-filter: blur(10px);
+    }
+    .dash-greeting { display: flex; align-items: center; gap: 12px; }
+    .dash-hello { color: white; font-weight: 800; font-size: 1.1rem; }
+    .dash-subtitle { color: rgba(255,255,255,0.8); font-size: 0.85rem; }
+    .dash-stars-total { display: flex; align-items: center; gap: 8px; color: white; font-weight: 800; font-size: 1.1rem; }
+    .stars-icon { font-size: 1.4rem; }
+    .stars-count { background: rgba(255,255,255,0.2); padding: 4px 12px; border-radius: 20px; }
+    .reset-btn { background: rgba(255,255,255,0.15); border: none; border-radius: 50%; width: 36px; height: 36px; font-size: 1.1rem; cursor: pointer; transition: background 0.3s; color: white; }
+    .reset-btn:hover { background: rgba(255,255,255,0.3); }
+    .dash-progress-strip {
+      display: flex; align-items: center; gap: 12px; padding: 12px 20px;
+      background: rgba(255,255,255,0.1);
+    }
+    .progress-label { color: rgba(255,255,255,0.9); font-size: 0.85rem; font-weight: 600; white-space: nowrap; }
+    .dash-progress-strip .progress-bar-container { flex: 1; }
+    .progress-percent { color: white; font-weight: 800; font-size: 0.9rem; white-space: nowrap; }
+    .dash-content { flex: 1; padding: 20px; overflow-y: auto; }
+    .dash-section-title { color: white; font-size: 1.3rem; font-weight: 800; margin-bottom: 16px; }
+    .topics-grid { display: flex; flex-direction: column; gap: 12px; }
+    .topic-card {
+      display: flex; align-items: center; gap: 14px; padding: 16px 20px;
+      background: white; border-radius: 20px; cursor: pointer;
+      transition: all 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      text-align: left; width: 100%;
+    }
+    .topic-card:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
+    .topic-card.topic-completed { border-left: 5px solid #6BCB77; }
+    .topic-number { font-size: 0.75rem; font-weight: 800; color: #999; min-width: 24px; }
+    .topic-icon { font-size: 2rem; }
+    .topic-info { flex: 1; }
+    .topic-title { font-weight: 800; color: #3F3D56; font-size: 1rem; }
+    .topic-subtitle { color: #888; font-size: 0.8rem; }
+    .topic-grade { font-size: 0.7rem; color: #aaa; margin-top: 2px; }
+    .topic-stars { display: flex; gap: 2px; font-size: 1rem; }
+    .topic-stars .earned { color: #FFD93D; }
+    .topic-stars .empty { color: #ddd; }
+    .topic-badge { font-size: 1.2rem; }
+    .topic-arrow { color: #ccc; font-size: 1rem; }
+    .fun-fact-banner {
+      display: flex; align-items: flex-start; gap: 12px; margin-top: 20px;
+      background: rgba(255,255,255,0.15); border-radius: 16px; padding: 16px 20px;
+      color: white; backdrop-filter: blur(4px);
+    }
+    .fun-fact-banner p { font-size: 0.95rem; line-height: 1.5; }
+
+    /* ===== LESSON VIEW ===== */
+    .lesson-view { min-height: 100vh; display: flex; flex-direction: column; }
+    .lesson-topbar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 20px; background: rgba(255,255,255,0.15); backdrop-filter: blur(10px);
+    }
+    .lesson-topic-label { display: flex; align-items: center; gap: 8px; color: white; font-weight: 700; }
+    .lesson-slide-count { color: rgba(255,255,255,0.9); font-weight: 700; background: rgba(255,255,255,0.2); padding: 4px 12px; border-radius: 20px; }
+    .lesson-progress-bar { height: 6px; background: rgba(255,255,255,0.3); }
+    .lesson-progress-fill { height: 100%; background: linear-gradient(90deg, #FFD93D, #FF6B6B); transition: width 0.5s; }
+    .lesson-content { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; }
+    .lesson-card {
+      background: white; border-radius: 24px; overflow: hidden;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.15); animation: fadeInUp 0.4s ease;
+    }
+    .lesson-slide-header { padding: 24px; color: white; }
+    .lesson-mascot-row { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 16px; }
+    .lesson-speech-bubble {
+      background: rgba(255,255,255,0.25); border-radius: 16px; padding: 10px 14px;
+      color: white; font-size: 0.9rem; font-weight: 600; flex: 1;
+    }
+    .lesson-slide-title { font-size: 1.4rem; font-weight: 900; }
+    .lesson-section { padding: 16px 20px; border-bottom: 1px solid #f0f0f0; }
+    .lesson-section:last-child { border-bottom: none; }
+    .lesson-section-label { font-size: 0.8rem; font-weight: 800; color: #999; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+    .lesson-story-box { color: #444; font-size: 1rem; line-height: 1.7; }
+    .lesson-visual-box {
+      background: linear-gradient(135deg, #f8f9ff, #e8ecff);
+      border-radius: 16px; padding: 20px; text-align: center;
+    }
+    .lesson-visual-text { font-size: 1.1rem; font-family: 'Nunito', monospace; color: #3F3D56; font-weight: 700; text-align: center; }
+    .lesson-explanation-box {
+      background: #fff9e6; border-left: 4px solid #FFD93D;
+      border-radius: 0 12px 12px 0; padding: 14px 16px;
+      color: #444; font-size: 1rem; line-height: 1.6;
+    }
+    .lesson-tip-box {
+      margin: 16px 20px; background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+      border-radius: 16px; padding: 14px 18px; color: #2e7d32;
+      font-size: 0.95rem; font-weight: 600;
+    }
+    .lesson-nav { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+    .slide-dots { display: flex; gap: 8px; }
+    .slide-dot {
+      width: 12px; height: 12px; border-radius: 50%; border: none;
+      background: rgba(255,255,255,0.4); cursor: pointer; transition: all 0.3s;
+    }
+    .slide-dot-active { background: white; transform: scale(1.3); }
+    .lesson-next-btn { min-width: 220px; }
+
+    /* ===== PRACTICE PROBLEMS ===== */
+    .practice-view { min-height: 100vh; display: flex; flex-direction: column; }
+    .practice-topbar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 20px; background: rgba(255,255,255,0.15); backdrop-filter: blur(10px);
+    }
+    .practice-topic-label { display: flex; align-items: center; gap: 8px; color: white; font-weight: 700; }
+    .practice-score { background: rgba(255,255,255,0.2); color: white; padding: 4px 14px; border-radius: 20px; font-weight: 800; }
+    .practice-content { flex: 1; padding: 20px; display: flex; flex-direction: column; gap: 16px; overflow-y: auto; }
+    .practice-mascot-row { display: flex; align-items: center; gap: 12px; }
+    .practice-speech {
+      background: rgba(255,255,255,0.2); color: white; border-radius: 16px;
+      padding: 10px 16px; font-size: 0.95rem; font-weight: 600; flex: 1;
+    }
+    .problem-card {
+      background: white; border-radius: 24px; padding: 24px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.15); display: flex; flex-direction: column; gap: 16px;
+      animation: slideInLeft 0.4s ease;
+    }
+    .problem-number { font-size: 0.75rem; font-weight: 800; color: #999; text-transform: uppercase; letter-spacing: 1px; }
+    .problem-question { font-size: 1.2rem; font-weight: 800; color: #3F3D56; line-height: 1.5; }
+    .problem-visual { background: linear-gradient(135deg, #f8f9ff, #e8ecff); border-radius: 16px; padding: 16px; text-align: center; }
+    .problem-visual-text { font-family: 'Nunito', monospace; font-size: 1rem; color: #3F3D56; font-weight: 700; }
+    .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .option-btn {
+      padding: 14px 12px; border: 3px solid #e8e8f0; border-radius: 16px;
+      font-size: 1rem; font-weight: 700; color: #3F3D56; background: white;
+      cursor: pointer; transition: all 0.3s;
+    }
+    .option-btn:hover { border-color: #6C63FF; background: #f0effe; }
+    .option-selected { border-color: #6C63FF; background: #f0effe; }
+    .option-correct { border-color: #6BCB77; background: #e8f5e9; color: #2e7d32; }
+    .option-wrong { border-color: #FF6B6B; background: #fff0f0; color: #c62828; }
+    .input-answer-area { display: flex; gap: 12px; }
+    .answer-input {
+      flex: 1; padding: 14px 18px; border: 3px solid #e8e8f0; border-radius: 16px;
+      font-size: 1.3rem; font-weight: 700; text-align: center; outline: none; transition: border-color 0.3s;
+    }
+    .answer-input:focus { border-color: #6C63FF; }
+    .hint-btn {
+      background: transparent; border: 2px dashed #FFD93D; color: #f39c12;
+      padding: 8px 16px; border-radius: 20px; font-size: 0.9rem; font-weight: 700; cursor: pointer; transition: all 0.3s;
+    }
+    .hint-btn:hover { background: #fff9e6; }
+    .hint-box {
+      background: #fff9e6; border: 2px solid #FFD93D; border-radius: 16px;
+      padding: 14px 16px; color: #7d5400; font-size: 0.95rem; line-height: 1.6;
+    }
+    .explanation-box {
+      background: #e8f5e9; border: 2px solid #6BCB77; border-radius: 16px;
+      padding: 14px 16px; color: #2e7d32; font-size: 0.95rem; line-height: 1.6;
+    }
+    .problem-actions { display: flex; justify-content: center; }
+    .check-btn, .next-problem-btn { min-width: 200px; }
+
+    /* ===== QUIZ SCREEN ===== */
+    .quiz-view { min-height: 100vh; display: flex; flex-direction: column; background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460); }
+    .quiz-topbar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 20px; background: rgba(255,255,255,0.05); backdrop-filter: blur(10px);
+    }
+    .quiz-label { display: flex; align-items: center; gap: 8px; color: #FFD93D; font-weight: 800; font-size: 1.1rem; }
+    .quiz-score-badge { background: rgba(255,215,61,0.2); color: #FFD93D; padding: 4px 14px; border-radius: 20px; font-weight: 800; }
+    .quiz-progress-bar { height: 6px; background: rgba(255,255,255,0.1); }
+    .quiz-progress-fill { height: 100%; background: linear-gradient(90deg, #FFD93D, #FF6B6B); transition: width 0.5s; }
+    .quiz-content { flex: 1; padding: 20px; display: flex; flex-direction: column; gap: 16px; overflow-y: auto; }
+    .quiz-header { text-align: center; }
+    .quiz-q-counter { color: rgba(255,255,255,0.6); font-size: 0.9rem; font-weight: 700; }
+    .quiz-encouragement { color: #FFD93D; font-weight: 700; font-size: 1rem; margin-top: 4px; }
+    .quiz-card {
+      background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 24px; padding: 24px; backdrop-filter: blur(10px);
+      display: flex; flex-direction: column; gap: 16px; animation: fadeInUp 0.4s ease;
+    }
+    .quiz-mascot-row { display: flex; align-items: center; gap: 12px; }
+    .quiz-q-number { color: #FFD93D; font-weight: 900; font-size: 1.1rem; }
+    .quiz-question { color: white; font-size: 1.2rem; font-weight: 800; line-height: 1.5; }
+    .quiz-visual { background: rgba(255,255,255,0.05); border-radius: 16px; padding: 14px; text-align: center; }
+    .quiz-visual-text { color: rgba(255,255,255,0.9); font-family: 'Nunito', monospace; font-size: 1rem; font-weight: 700; }
+    .quiz-options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .quiz-option {
+      display: flex; align-items: center; gap: 10px; padding: 14px 16px;
+      background: rgba(255,255,255,0.08); border: 2px solid rgba(255,255,255,0.2);
+      border-radius: 16px; cursor: pointer; transition: all 0.3s; text-align: left;
+    }
+    .quiz-option:hover { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.4); }
+    .quiz-option-selected { background: rgba(108,99,255,0.3); border-color: #6C63FF; }
+    .quiz-option-correct { background: rgba(107,203,119,0.3); border-color: #6BCB77; }
+    .quiz-option-wrong { background: rgba(255,107,107,0.3); border-color: #FF6B6B; }
+    .quiz-option-disabled { opacity: 0.5; cursor: not-allowed; }
+    .quiz-option-letter { background: rgba(255,255,255,0.2); color: #FFD93D; border-radius: 8px; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 0.85rem; flex-shrink: 0; }
+    .quiz-option-text { color: white; font-weight: 700; font-size: 0.95rem; }
+    .quiz-option-check { margin-left: auto; font-size: 1.1rem; }
+    .quiz-option-x { margin-left: auto; font-size: 1.1rem; }
+    .quiz-answer-feedback {
+      border-radius: 16px; padding: 14px 16px; font-weight: 700; font-size: 0.95rem; animation: fadeInUp 0.3s ease;
+    }
+    .correct-fb { background: rgba(107,203,119,0.2); color: #6BCB77; border: 1px solid rgba(107,203,119,0.4); }
+    .wrong-fb { background: rgba(255,107,107,0.2); color: #FF6B6B; border: 1px solid rgba(255,107,107,0.4); }
+    .quiz-actions { display: flex; justify-content: center; }
+    .quiz-submit-btn, .quiz-next-btn { min-width: 200px; }
+    .quiz-dots { display: flex; justify-content: center; gap: 8px; margin-top: 8px; }
+    .quiz-dot { width: 10px; height: 10px; border-radius: 50%; transition: all 0.3s; }
+    .quiz-dot-done { background: #6BCB77; }
+    .quiz-dot-current { background: #FFD93D; transform: scale(1.3); }
+    .quiz-dot-pending { background: rgba(255,255,255,0.2); }
+
+    /* ===== RESULTS SCREEN ===== */
+    .results-view { min-height: 100vh; overflow-y: auto; }
+    .results-content { max-width: 500px; margin: 0 auto; padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+    .results-header-card {
+      background: white; border-radius: 24px; padding: 28px; text-align: center;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.15); animation: fadeInDown 0.5s ease;
+    }
+    .results-mascot { font-size: 3.5rem; margin-bottom: 12px; animation: bounce 2s infinite; }
+    .results-title { font-size: 2rem; font-weight: 900; color: #3F3D56; }
+    .results-message { color: #666; font-size: 1rem; margin-top: 8px; line-height: 1.5; }
+    .results-stars-card {
+      background: white; border-radius: 24px; padding: 24px; text-align: center;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.15); animation: fadeInUp 0.5s ease 0.1s both;
+    }
+    .results-topic-label { display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 700; color: #666; margin-bottom: 16px; }
+    .results-stars-row { display: flex; justify-content: center; gap: 12px; margin-bottom: 20px; font-size: 3rem; }
+    .results-star { transition: all 0.5s; display: inline-block; }
+    .results-star-visible { animation: starPop 0.5s ease forwards; }
+    .results-star-hidden { opacity: 0; transform: scale(0); }
+    .results-score-display { margin-bottom: 8px; }
+    .results-score-number { font-size: 3.5rem; font-weight: 900; color: #6C63FF; }
+    .results-score-label { color: #999; font-size: 0.9rem; font-weight: 700; }
+    .results-score-breakdown { color: #666; font-size: 0.9rem; margin-top: 8px; }
+    .results-total-card {
+      background: rgba(255,255,255,0.15); border-radius: 20px; padding: 20px;
+      backdrop-filter: blur(4px); animation: fadeInUp 0.5s ease 0.2s both;
+    }
+    .results-total-label { color: rgba(255,255,255,0.8); font-size: 0.9rem; font-weight: 700; margin-bottom: 8px; }
+    .results-total-stars { color: #FFD93D; font-size: 1.5rem; font-weight: 900; margin-bottom: 10px; }
+    .results-total-bar { background: rgba(255,255,255,0.2); border-radius: 10px; height: 10px; overflow: hidden; }
+    .results-total-fill { height: 100%; background: linear-gradient(90deg, #FFD93D, #FF6B6B); border-radius: 10px; transition: width 0.8s ease; }
+    .results-actions { display: flex; gap: 10px; flex-wrap: wrap; animation: fadeInUp 0.5s ease 0.3s both; }
+    .results-retry-btn {
+      flex: 1; padding: 14px; border: 3px solid rgba(255,255,255,0.5); border-radius: 50px;
+      background: transparent; color: white; font-size: 1rem; font-weight: 700; cursor: pointer; transition: all 0.3s;
+    }
+    .results-retry-btn:hover { background: rgba(255,255,255,0.15); }
+    .results-dashboard-btn {
+      flex: 1; padding: 14px; background: linear-gradient(135deg, #6C63FF, #3F3D56);
+      color: white; border-radius: 50px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: all 0.3s;
+    }
+    .results-dashboard-btn:hover { transform: translateY(-2px); }
+    .results-next-btn {
+      width: 100%; padding: 14px; background: linear-gradient(135deg, #FFD93D, #FF8E53);
+      color: white; border-radius: 50px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: all 0.3s;
+    }
+    .results-next-btn:hover { transform: translateY(-2px); }
+    .results-mia-message {
+      display: flex; align-items: flex-start; gap: 12px;
+      background: rgba(255,255,255,0.15); border-radius: 20px; padding: 16px 20px;
+      color: white; backdrop-filter: blur(4px); animation: fadeInUp 0.5s ease 0.4s both;
+    }
+    .results-mia-message p { font-size: 0.95rem; line-height: 1.5; font-style: italic; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel" data-presets="react">
+    const { useState, useEffect } = React;
+
+    // ============================================================
+    // DATA
+    // ============================================================
+    const TOPICS = [
+      {
+        id: 'numbers-counting', title: 'সংখ্যা ও গণনা', subtitle: 'গণনা শিখি একজন প্রো-এর মতো!',
+        icon: '🔢', color: '#FF6B6B', bgGradient: 'linear-gradient(135deg, #FF6B6B, #FF8E53)', grade: 1,
+        slides: [
+          { title: '🔢 দশক ও একক (Tens & Ones)', story: 'সংখ্যা ১০০ পর্যন্ত যায়! প্রতিটি দুই-অঙ্কের সংখ্যায় দুটি অংশ আছে — দশক (Tens) এবং একক (Ones)।', visual: '  দশক | একক\n   ৪  |  ৭  = ৪৭\n   ৩  |  ০  = ৩০\n   ৮  |  ৫  = ৮৫\n\n৪৭ = ৪ দশক + ৭ একক\n   = ৪০  +  ৭  = ৪৭', explanation: 'বাম দিকের অঙ্কটি দশক (×১০), ডান দিকের অঙ্কটি একক! ৪৭ মানে ৪ দশক + ৭ একক = ৪০+৭!', tip: '💡 দশক কৌশল: দশক = ১০-এর দল! ৬০ = ৬টি দশ! ৩ দশক ৫ একক = ৩৫!' },
+          { title: '🦘 লাফিয়ে গণনা (Skip Counting)', story: '২ করে, ৫ করে বা ১০ করে লাফিয়ে গণনা করলে অনেক দ্রুত বড় সংখ্যা গোনা যায়!', visual: '২ করে: ২, ৪, ৬, ৮, ১০, ১২, ১৪, ১৬...\n৫ করে: ৫, ১০, ১৫, ২০, ২৫, ৩০, ৩৫...\n১০ করে: ১০, ২০, ৩০, ৪০, ৫০, ৬০, ৭০...', explanation: 'লাফিয়ে গণনা বড় সংখ্যা গোনার সবচেয়ে দ্রুত উপায়! ৫ করে গণনা হাতের আঙুল দিয়ে সহজে করা যায়!', tip: '💡 ১০ করে গণনায় শুধু দশকের ঘর বাড়ে! ২০→৩০→৪০→৫০...' },
+          { title: '🏆 দুই অঙ্কের সংখ্যার তুলনা', story: '৬৩ আর ৫৮ — কোনটা বড়? আগে দশক তুলনা করো, তারপর একক দেখো!', visual: '৬৩  🆚  ৫৮\nদশক: ৬ > ৫  →  তাই ৬৩ > ৫৮!\n\n৪৭  🆚  ৪৯\nদশক সমান! একক তুলনা:\n৭ < ৯  →  তাই ৪৭ < ৪৯!', explanation: 'নিয়ম: প্রথমে দশক দেখো। দশক সমান হলে একক দেখো। যার দশক/একক বেশি সে বড়!', tip: '💡 বড় দশক = বড় সংখ্যা! দশক সমান হলে একক তুলনা করো!' },
+        ],
+        practice: [
+          { id:'nc_p1', question:'৫৩ সংখ্যায় দশকের ঘরে কতটি?', visual:'৫৩ = ? দশক + ৩ একক\n  দশক | একক\n   ?  |  ৩', type:'multiple-choice', options:['৩','৫','৮','৫৩'], answer:'৫', hint:'বাম দিকের অঙ্কটি দশকের ঘরে! ৫৩-এ বাম দিকে কোন অঙ্কটি আছে?', explanation:'৫৩ = ৫ দশক + ৩ একক! দশকের ঘরে আছে ৫! 🎯' },
+          { id:'nc_p2', question:'৭৯ সংখ্যায় এককের ঘরে কতটি?', visual:'৭৯ = ৭ দশক + ? একক\n  দশক | একক\n   ৭  |  ?', type:'multiple-choice', options:['৭','৯','৭৯','০'], answer:'৯', hint:'ডান দিকের অঙ্কটি এককের ঘরে! ৭৯-এ ডান দিকে কোন অঙ্কটি আছে?', explanation:'৭৯ = ৭ দশক + ৯ একক! এককের ঘরে আছে ৯! ✅' },
+          { id:'nc_p3', question:'৪ দশক ৬ একক = কত?', visual:'দশক | একক\n ৪  |  ৬\n= ? ', type:'multiple-choice', options:['৪৬','৬৪','৪০৬','৬০৪'], answer:'৪৬', hint:'দশক × ১০ + একক = ৪০ + ৬ = ?', explanation:'৪ দশক ৬ একক = ৪০ + ৬ = ৪৬! 🎉' },
+          { id:'nc_p4', question:'৬০ সংখ্যায় দশকের ঘরে কতটি?', visual:'৬০ = ? দশক + ০ একক', type:'multiple-choice', options:['০','৬','৬০','১০'], answer:'৬', hint:'৬০ = ৬ × ১০ + ০! দশকের ঘরে কত?', explanation:'৬০ = ৬ দশক + ০ একক! দশকের ঘরে ৬! ✅' },
+          { id:'nc_p5', question:'১০ করে গণনায় ৪০-এর পরে কী আসে?', visual:'১০ → ২০ → ৩০ → ৪০ → ?', type:'multiple-choice', options:['৪১','৪৫','৫০','৬০'], answer:'৫০', hint:'১০ করে লাফাও: ...৩০, ৪০, পরেরটা? দশকের ঘরে ১ যোগ করো!', explanation:'৪০ + ১০ = ৫০! ১০ করে গণনায় দশকের ঘর বাড়ে! 🦘' },
+          { id:'nc_p6', question:'৫ করে গণনায় ২৫-এর পরে কী আসে?', visual:'৫ → ১০ → ১৫ → ২০ → ২৫ → ?', type:'multiple-choice', options:['২৬','২৮','৩০','৩৫'], answer:'৩০', hint:'৫ করে লাফাও: ২৫ + ৫ = ?', explanation:'২৫ + ৫ = ৩০! ৫ করে গণনায় সবসময় ০ বা ৫ দিয়ে শেষ হয়! 🦘' },
+          { id:'nc_p7', question:'২ করে গণনায় ২৬-এর পরে কী আসে?', visual:'২০ → ২২ → ২৪ → ২৬ → ?', type:'number-input', answer:'28', hint:'২ করে লাফাও: ২৬ + ২ = ?', explanation:'২৬ → ২৮! ২ করে গণনায় সবসময় জোড় সংখ্যা আসে! 🎉' },
+          { id:'nc_p8', question:'১০ করে গণনায় ৭০-এর আগে কোনটি?', visual:'? → ৭০ → ৮০', type:'multiple-choice', options:['৬০','৬৫','৫০','৭৫'], answer:'৬০', hint:'১০ করে পিছনে লাফাও: ৭০ - ১০ = ?', explanation:'৭০ - ১০ = ৬০! ✅' },
+          { id:'nc_p9', question:'কোন সংখ্যাটি সবচেয়ে বড়?', visual:'৭২  |  ৬৯  |  ৭৮  |  ৬৫', type:'multiple-choice', options:['৭২','৬৯','৭৮','৬৫'], answer:'৭৮', hint:'প্রথমে দশক তুলনা করো: ৭, ৬, ৭, ৬ — দশক ৭ আছে কোনগুলোয়? তারপর একক তুলনা করো!', explanation:'৭৮ সবচেয়ে বড়! দশক ৭ আছে ৭২ ও ৭৮-এ, কিন্তু একক ৮ > ২! 🏆' },
+          { id:'nc_p10', question:'কোনটি ছোট: ৫৪ নাকি ৪৫?', visual:'৫৪  🆚  ৪৫', type:'multiple-choice', options:['৫৪','৪৫','দুটো সমান','বলা যায় না'], answer:'৪৫', hint:'দশক তুলনা করো: ৫৪-এ দশক ৫, ৪৫-এ দশক ৪। কোনটি ছোট?', explanation:'৪৫ ছোট! কারণ ৪৫-এ দশক ৪, আর ৫৪-এ দশক ৫। ৪ < ৫! ✅' },
+          { id:'nc_p11', question:'কোন সংখ্যাটি সবচেয়ে ছোট?', visual:'৩৮  |  ৪২  |  ২৯  |  ৫১', type:'multiple-choice', options:['৩৮','৪২','২৯','৫১'], answer:'২৯', hint:'সব দশক দেখো: ৩, ৪, ২, ৫ — সবচেয়ে ছোট দশক কোনটি?', explanation:'২৯ সবচেয়ে ছোট! দশক ২ সবচেয়ে কম! ✅' },
+          { id:'nc_p12', question:'৮৫ ও ৮৩-এর মধ্যে কোনটি বড়?', visual:'৮৫  🆚  ৮৩', type:'multiple-choice', options:['৮৫','৮৩','দুটো সমান','বলা যায় না'], answer:'৮৫', hint:'দশক সমান (৮=৮)! একক তুলনা করো: ৫ বনাম ৩।', explanation:'৮৫ বড়! দশক সমান, কিন্তু একক ৫ > ৩! ✅' },
+          { id:'nc_p13', question:'৩ করে গণনায় ১৫-এর পরে কী আসে?', visual:'৩ → ৬ → ৯ → ১২ → ১৫ → ?', type:'multiple-choice', options:['১৬','১৭','১৮','২০'], answer:'১৮', hint:'৩ করে লাফাও: ১৫ + ৩ = ?', explanation:'১৫ + ৩ = ১৮! ৩ করে গণনা: ৩,৬,৯,১২,১৫,১৮... 🦘' },
+          { id:'nc_p14', question:'৪ দশক ০ একক = কত?', visual:'দশক | একক\n ৪  |  ০', type:'number-input', answer:'40', hint:'দশক ৪ মানে ৪ × ১০ = ৪০। একক ০!', explanation:'৪ দশক ০ একক = ৪০! শুধু দশক, কোনো একক নেই! ✅' },
+          { id:'nc_p15', question:'এই সংখ্যাগুলো ছোট থেকে বড়ে সাজালে মাঝেরটা কোনটি?', visual:'৬৩  |  ৫৭  |  ৭১', type:'multiple-choice', options:['৬৩','৫৭','৭১','সব সমান'], answer:'৬৩', hint:'ছোট থেকে বড় সাজাও: ৫৭ < ৬৩ < ৭১। মাঝেরটা কোনটি?', explanation:'সাজানো: ৫৭, ৬৩, ৭১। মাঝেরটা ৬৩! ✅' },
+          { id:'nc_p16', question:'কোনটি সঠিক?', visual:'৪৮  __ ৫২', type:'multiple-choice', options:['৪৮ > ৫২','৪৮ = ৫২','৪৮ < ৫২','বলা যায় না'], answer:'৪৮ < ৫২', hint:'দশক: ৪ < ৫। তাই ৪৮ ____ ৫২?', explanation:'৪৮ < ৫২! দশক ৪ < ৫, তাই ৪৮ ছোট! ✅' },
+          { id:'nc_p17', question:'২ করে গণনায় ৩৪-এর আগে কোনটি?', visual:'? → ৩৪ → ৩৬', type:'multiple-choice', options:['৩১','৩২','৩৩','৩৫'], answer:'৩২', hint:'২ করে পিছনে: ৩৪ - ২ = ?', explanation:'৩৪ - ২ = ৩২! ২ করে গণনায়: ...৩২, ৩৪, ৩৬... ✅' },
+          { id:'nc_p18', question:'কোন সংখ্যাটি ৬ দশক ৫ একক?', visual:'দশক = ৬, একক = ৫', type:'multiple-choice', options:['৫৬','৬৫','৫৬০','৬৫০'], answer:'৬৫', hint:'দশক×১০ + একক = ৬০ + ৫ = ?', explanation:'৬ দশক ৫ একক = ৬০ + ৫ = ৬৫! ✅' },
+          { id:'nc_p19', question:'৫ করে গণনায় ৪০-এর পরে কী?', visual:'২৫ → ৩০ → ৩৫ → ৪০ → ?', type:'number-input', answer:'45', hint:'৫ করে লাফাও: ৪০ + ৫ = ?', explanation:'৪০ + ৫ = ৪৫! ✅' },
+          { id:'nc_p20', question:'৯৩ ও ৯৭-এর মধ্যে কোনটি বড়?', visual:'৯৩  🆚  ৯৭', type:'multiple-choice', options:['৯৩','৯৭','দুটো সমান','বলা যায় না'], answer:'৯৭', hint:'দশক সমান (৯=৯)! একক তুলনা করো: ৩ বনাম ৭।', explanation:'৯৭ বড়! দশক সমান, একক ৭ > ৩! ✅' },
+        ],
+        quiz: [
+          { id:'nc_q1', question:'৮৬ সংখ্যায় এককের ঘরে কত?', visual:'৮৬ = ৮ দশক + ? একক', options:['৮','৬','৮৬','৬৮'], answer:'৬' },
+          { id:'nc_q2', question:'৫ করে গণনায় ৩৫-এর পরে কী আসে?', visual:'২৫ → ৩০ → ৩৫ → ?', options:['৩৬','৪০','৪৫','৫০'], answer:'৪০' },
+          { id:'nc_q3', question:'কোনটি ছোট: ৬৪ নাকি ৬৮?', visual:'৬৪  🆚  ৬৮', options:['৬৪','৬৮','দুটো সমান','বলা যাচ্ছে না'], answer:'৬৪' },
+          { id:'nc_q4', question:'৩ দশক ৭ একক = কত?', visual:'দশক | একক\n ৩  |  ৭', options:['৩৭','৭৩','৩০৭','৭০৩'], answer:'৩৭' },
+          { id:'nc_q5', question:'১০ করে গণনায় ৬০-এর আগে কোনটি?', visual:'? → ৬০ → ৭০', options:['৪০','৫০','৫৫','৫৯'], answer:'৫০' },
+          { id:'nc_q6', question:'কোনটি সঠিক: ৭৩ __ ৭৮?', visual:'৭৩  __  ৭৮', options:['৭৩ > ৭৮','৭৩ = ৭৮','৭৩ < ৭৮','বলা যায় না'], answer:'৭৩ < ৭৮' },
+          { id:'nc_q7', question:'৫ দশক ২ একক = কত?', visual:'দশক = ৫, একক = ২', options:['২৫','৫২','৫০২','২০৫'], answer:'৫২' },
+          { id:'nc_q8', question:'২ করে গণনায় ৪৪-এর পরে কোনটি?', visual:'৪০ → ৪২ → ৪৪ → ?', options:['৪৫','৪৬','৪৮','৫০'], answer:'৪৬' },
+          { id:'nc_q9', question:'কোন সংখ্যাটি সবচেয়ে বড়?', visual:'৪৫ | ৫৪ | ৪৪ | ৫৫', options:['৪৫','৫৪','৪৪','৫৫'], answer:'৫৫' },
+          { id:'nc_q10', question:'৩ করে গণনায় ২১-এর পরে কী?', visual:'১৫ → ১৮ → ২১ → ?', options:['২২','২৩','২৪','২৫'], answer:'২৪' },
+          { id:'nc_q11', question:'৯৪ সংখ্যায় দশকের ঘরে কত?', visual:'৯৪ = ? দশক + ৪ একক', options:['৪','৯','৯৪','৪৯'], answer:'৯' },
+          { id:'nc_q12', question:'ছোট থেকে বড়: ৩২, ২৩, ৩৩ সাজালে প্রথমটা কোনটি?', visual:'৩২, ২৩, ৩৩ → ছোট থেকে বড়', options:['৩২','২৩','৩৩','সব সমান'], answer:'২৩' },
+        ],
+      },
+      {
+        id: 'addition-subtraction', title: 'যোগ ও বিয়োগ', subtitle: 'যোগ করি এবং বিয়োগ করি!',
+        icon: '➕', color: '#6C63FF', bgGradient: 'linear-gradient(135deg, #6C63FF, #3F3D56)', grade: 1,
+        slides: [
+          { title: '➕ যোগ — Carry (হাতে নেওয়া) শেখো!', story: 'যখন একক ঘরে যোগ ১০ বা তার বেশি হয়, অতিরিক্ত ১টি দশক ঘরে "হাতে" নিয়ে যেতে হয় — এটাই Carry!', visual: 'উদাহরণ ১ (Carry নেই):\n  ২৩        ৪১\n+ ১৪      + ৩৫\n────      ────\n  ৩৭        ৭৬\n\nউদাহরণ ২ (Carry আছে):\n  ¹          ¹\n  ২৮        ৪৭\n+ ১৫      + ৩৬\n────      ────\n  ৪৩        ৮৩\n৮+৫=১৩→৩ লিখি,১ হাতে\n৪+৩+১=৮ ✅', explanation: 'Carry নিয়ম: একক যোগ ≥১০ হলে → একক ঘরে শুধু এককটা (যেমন ১৩→৩) লিখি, দশকটা (১) উপরে হাতে নিই!', tip: '💡 মনে রাখো: সবসময় ডান থেকে (একক ঘর) শুরু! একক ১০+ হলে ১ "হাতে" নাও!' },
+          { title: '➕ আরও Carry উদাহরণ — ধাপে ধাপে', story: 'বারবার অনুশীলন করলে Carry সহজ হয়ে যায়! এখানে আরও ৩টি উদাহরণ দেখো:', visual: 'উদাহরণ ৩:        উদাহরণ ৪:        উদাহরণ ৫:\n  ¹                ¹                ¹\n  ৫৮              ৬৪              ৩৯\n+ ২৭            + ২৯            + ৪৩\n────            ────            ────\n  ৮৫              ৯৩              ৮২\n\n৮+৭=১৫         ৪+৯=১৩         ৯+৩=১২\n→৫ লিখি,১হাতে  →৩ লিখি,১হাতে  →২ লিখি,১হাতে\n৫+২+১=৮ ✅      ৬+২+১=৯ ✅      ৩+৪+১=৮ ✅', explanation: 'Carry-এর সূত্র: ক+খ=? → যদি ≥১০ হয়: এককটা লিখি + ১ হাতে নিই → দশকে (ক-দশক + খ-দশক + ১)', tip: '💡 চেষ্টা করো নিজে: ৪৬+৩৭=? (৬+৭=১৩→৩ লিখি, ১ হাতে → ৪+৩+১=৮ → ৮৩!)' },
+          { title: '➖ বিয়োগ — Borrow (ধার নেওয়া) শেখো!', story: 'যখন একক ঘরে উপরের সংখ্যা নিচেরটার চেয়ে ছোট, দশক ঘর থেকে ১০ ধার নিতে হয় — এটাই Borrowing!', visual: 'উদাহরণ ১ (Borrow নেই):\n  ৭৫        ৮৯\n- ৩২      - ৪৫\n────      ────\n  ৪৩        ৪৪\n\nউদাহরণ ২ (Borrow আছে):\n  ⁶¹²        ⁵¹১\n  ৭²২        ৬¹১\n- ২৮        - ৪৭\n────        ────\n  ৪৪          ৩৪\n২<৮! ধার: ১২−৮=৪  ১<৭! ধার: ১১−৭=৪\nদশক: ৬−২=৪ ✅     দশক: ৫−৪=১... \nআরো ৩টি উদাহরণ:\n৮২−৪৫=৩৭  ৯১−৫৬=৩৫  ৬৩−২৮=৩৫', explanation: 'Borrow নিয়ম: একক ঘরে উপর<নিচ হলে → দশক ঘর থেকে ১০ ধার নাও! দশক ঘর থেকে ১ বিয়োগ করো।', tip: '💡 Borrow সংকেত: একক ছোট হলে দশকের উপর ছোট করে "ধার নেওয়া" দেখাও!' },
+        ],
+        practice: [
+          { id:'as_p1', question:'Carry নেই — সহজ যোগ: ২৪ + ১৩ = ?', visual:'  ২৪\n+ ১৩\n────\n  ?', type:'multiple-choice', options:['৩৫','৩৬','৩৭','৩৮'], answer:'৩৭', hint:'একক: ৪+৩=৭। দশক: ২+১=৩। উত্তর: ৩৭!', explanation:'২৪+১৩=৩৭! একক: ৪+৩=৭, দশক: ২+১=৩ → ৩৭ ✅' },
+          { id:'as_p2', question:'Carry নেই: ৫২ + ৩৫ = ?', visual:'  ৫২\n+ ৩৫\n────\n  ?', type:'multiple-choice', options:['৮৫','৮৬','৮৭','৮৮'], answer:'৮৭', hint:'একক: ২+৫=৭। দশক: ৫+৩=৮। উত্তর: ৮৭!', explanation:'৫২+৩৫=৮৭! কোনো Carry নেই, সহজ! ✅' },
+          { id:'as_p3', question:'Carry নেই: ৪৩ + ২৬ = ?', visual:'  ৪৩\n+ ২৬\n────\n  ?', type:'multiple-choice', options:['৬৭','৬৮','৬৯','৭০'], answer:'৬৯', hint:'একক: ৩+৬=৯। দশক: ৪+২=৬। উত্তর: ৬৯!', explanation:'৪৩+২৬=৬৯! খুব সহজ যোগ ✅' },
+          { id:'as_p4', question:'Carry সহ: ৩৬ + ৪৭ = ?', visual:'  ¹\n  ৩৬\n+ ৪৭\n────\n  ?', type:'multiple-choice', options:['৭১','৮১','৮৩','৮৫'], answer:'৮৩', hint:'একক: ৬+৭=১৩ → ৩ লিখি, ১ হাতে নিই। দশক: ৩+৪+১=৮। উত্তর: ৮৩!', explanation:'৩৬+৪৭=৮৩! ৬+৭=১৩, তাই ৩ লিখি ও ১ হাতে নিই ✅' },
+          { id:'as_p5', question:'Carry সহ: ৪৮ + ৩৫ = ?', visual:'  ¹\n  ৪৮\n+ ৩৫\n────\n  ?', type:'multiple-choice', options:['৭১','৮১','৮৩','৮৫'], answer:'৮৩', hint:'একক: ৮+৫=১৩ → ৩ লিখি, ১ হাতে নিই। দশক: ৪+৩+১=৮। উত্তর: ৮৩!', explanation:'৪৮+৩৫=৮৩! Carry মনে আছে? ৮+৫=১৩! ⭐' },
+          { id:'as_p6', question:'Carry সহ: ৫৭ + ২৮ = ?', visual:'  ¹\n  ৫৭\n+ ২৮\n────\n  ?', type:'number-input', answer:'85', hint:'একক: ৭+৮=১৫ → ৫ লিখি, ১ হাতে নিই। দশক: ৫+২+১=৮। উত্তর: ৮৫!', explanation:'৫৭+২৮=৮৫! ৭+৮=১৫ → Carry ১ → দশকে ৫+২+১=৮ ✅' },
+          { id:'as_p7', question:'Carry সহ: ৬৯ + ২৪ = ?', visual:'  ¹\n  ৬৯\n+ ২৪\n────\n  ?', type:'number-input', answer:'93', hint:'একক: ৯+৪=১৩ → ৩ লিখি, ১ হাতে নিই। দশক: ৬+২+১=৯। উত্তর: ৯৩!', explanation:'৬৯+২৪=৯৩! ৯+৪=১৩ → Carry ১ → ৬+২+১=৯ → ৯৩ 🎯' },
+          { id:'as_p8', question:'Carry সহ: ৭৪ + ১৮ = ?', visual:'  ¹\n  ৭৪\n+ ১৮\n────\n  ?', type:'number-input', answer:'92', hint:'একক: ৪+৮=১২ → ২ লিখি, ১ হাতে নিই। দশক: ৭+১+১=৯। উত্তর: ৯২!', explanation:'৭৪+১৮=৯২! ৪+৮=১২ → Carry ১ → ৭+১+১=৯ → ৯২ ✅' },
+          { id:'as_p9', question:'Carry সহ: ৪৬ + ৩৭ = ?', visual:'  ¹\n  ৪৬\n+ ৩৭\n────\n  ?', type:'number-input', answer:'83', hint:'একক: ৬+৭=১৩ → ৩ লিখি, ১ হাতে নিই। দশক: ৪+৩+১=৮। উত্তর: ৮৩!', explanation:'৪৬+৩৭=৮৩! ৬+৭=১৩ → ৩ লিখি, ১ Carry → ৪+৩+১=৮ → ৮৩ 🏆' },
+          { id:'as_p10', question:'Borrow নেই — সহজ বিয়োগ: ৮৯ − ৪৩ = ?', visual:'  ৮৯\n- ৪৩\n────\n  ?', type:'multiple-choice', options:['৪৪','৪৫','৪৬','৪৭'], answer:'৪৬', hint:'একক: ৯−৩=৬। দশক: ৮−৪=৪। উত্তর: ৪৬!', explanation:'৮৯−৪৩=৪৬! কোনো Borrow লাগেনি ✅' },
+          { id:'as_p11', question:'Borrow নেই: ৭৬ − ৩২ = ?', visual:'  ৭৬\n- ৩২\n────\n  ?', type:'multiple-choice', options:['৪২','৪৩','৪৪','৪৫'], answer:'৪৪', hint:'একক: ৬−২=৪। দশক: ৭−৩=৪। উত্তর: ৪৪!', explanation:'৭৬−৩২=৪৪! সহজ বিয়োগ ✅' },
+          { id:'as_p12', question:'Borrow নেই: ৯৭ − ৫৪ = ?', visual:'  ৯৭\n- ৫৪\n────\n  ?', type:'multiple-choice', options:['৪১','৪২','৪৩','৪৪'], answer:'৪৩', hint:'একক: ৭−৪=৩। দশক: ৯−৫=৪। উত্তর: ৪৩!', explanation:'৯৭−৫৪=৪৩! সহজ ✅' },
+          { id:'as_p13', question:'Borrow সহ: ৬৩ − ২৭ = ?', visual:'  ⁵¹³\n  ৬³\n- ২৭\n────\n  ?', type:'multiple-choice', options:['৩৪','৩৫','৩৬','৩৭'], answer:'৩৬', hint:'একক: ৩<৭! দশক থেকে ধার: ১৩−৭=৬। দশক: ৫−২=৩। উত্তর: ৩৬!', explanation:'৬৩−২৭=৩৬! ৩<৭ বলে ধার নিই → ১৩−৭=৬, দশক: ৫−২=৩ → ৩৬ ✅' },
+          { id:'as_p14', question:'Borrow সহ: ৮২ − ৪৫ = ?', visual:'  ⁷¹²\n  ৮²\n- ৪৫\n────\n  ?', type:'multiple-choice', options:['৩৫','৩৬','৩৭','৩৮'], answer:'৩৭', hint:'একক: ২<৫! দশক থেকে ধার: ১২−৫=৭। দশক: ৭−৪=৩। উত্তর: ৩৭!', explanation:'৮২−৪৫=৩৭! ২<৫ বলে ধার → ১২−৫=৭, ৭−৪=৩ → ৩৭ ✅' },
+          { id:'as_p15', question:'Borrow সহ: ৭১ − ৩৮ = ?', visual:'  ⁶¹১\n  ৭¹\n- ৩৮\n────\n  ?', type:'number-input', answer:'33', hint:'একক: ১<৮! দশক থেকে ধার: ১১−৮=৩। দশক: ৬−৩=৩। উত্তর: ৩৩!', explanation:'৭১−৩৮=৩৩! ১<৮ বলে ধার → ১১−৮=৩, ৬−৩=৩ → ৩৩ 🎯' },
+          { id:'as_p16', question:'Borrow সহ: ৯০ − ৫৬ = ?', visual:'  ⁸¹০\n  ৯০\n- ৫৬\n────\n  ?', type:'number-input', answer:'34', hint:'একক: ০<৬! দশক থেকে ধার: ১০−৬=৪। দশক: ৮−৫=৩। উত্তর: ৩৪!', explanation:'৯০−৫৬=৩৪! ০<৬ বলে ধার → ১০−৬=৪, ৮−৫=৩ → ৩৪ ✅' },
+          { id:'as_p17', question:'Borrow সহ: ৮৫ − ৪৭ = ?', visual:'  ⁷¹৫\n  ৮⁵\n- ৪৭\n────\n  ?', type:'number-input', answer:'38', hint:'একক: ৫<৭! দশক থেকে ধার: ১৫−৭=৮। দশক: ৭−৪=৩। উত্তর: ৩৮!', explanation:'৮৫−৪৭=৩৮! ৫<৭ বলে ধার → ১৫−৭=৮, ৭−৪=৩ → ৩৮ 🏆' },
+          { id:'as_p18', question:'শব্দ সমস্যা: একটি বাক্সে ৪৭টি আম ছিল, আরও ৩৬টি রাখা হলো। মোট কতটি?', visual:'  ¹\n  ৪৭\n+ ৩৬\n────\n  ?', type:'multiple-choice', options:['৭১','৮১','৮৩','৮৫'], answer:'৮৩', hint:'৭+৬=১৩ → ৩ লিখি, ১ Carry → ৪+৩+১=৮ → ৮৩!', explanation:'৪৭+৩৬=৮৩টি আম! Carry সহ যোগ করা হলো 🎊' },
+          { id:'as_p19', question:'শব্দ সমস্যা: স্কুলে ৯২ জন ছাত্র ছিল, ৪৫ জন চলে গেলে কতজন বাকি?', visual:'  ⁸¹২\n  ৯²\n- ৪৫\n────\n  ?', type:'multiple-choice', options:['৪৫','৪৬','৪৭','৪৮'], answer:'৪৭', hint:'একক: ২<৫! ধার: ১২−৫=৭। দশক: ৮−৪=৪। উত্তর: ৪৭!', explanation:'৯২−৪৫=৪৭ জন বাকি! Borrow দিয়ে ✅' },
+          { id:'as_p20', question:'চ্যালেঞ্জ! Carry সহ: ৫৫ + ৩৮ = ?', visual:'  ¹\n  ৫৫\n+ ৩৮\n────\n  ?', type:'number-input', answer:'93', hint:'একক: ৫+৮=১৩ → ৩ লিখি, ১ Carry। দশক: ৫+৩+১=৯। উত্তর: ৯৩!', explanation:'৫৫+৩৮=৯৩! ৫+৮=১৩ → Carry → ৫+৩+১=৯ → ৯৩ 🌟' },
+        ],
+        quiz: [
+          { id:'as_q1', question:'৩২ + ৪৭ = ?', visual:'  ৩২\n+ ৪৭\n────', options:['৭৭','৭৮','৭৯','৮০'], answer:'৭৯' },
+          { id:'as_q2', question:'৫৪ + ৩৮ = ? (Carry আছে)', visual:'  ¹\n  ৫৪\n+ ৩৮\n────', options:['৮০','৯০','৯২','৯৪'], answer:'৯২' },
+          { id:'as_q3', question:'৬৬ + ২৭ = ? (Carry আছে)', visual:'  ¹\n  ৬৬\n+ ২৭\n────', options:['৮৩','৯৩','৯৪','৯৫'], answer:'৯৩' },
+          { id:'as_q4', question:'৭৩ + ১৯ = ? (Carry আছে)', visual:'  ¹\n  ৭৩\n+ ১৯\n────', options:['৮০','৯০','৯২','৯৪'], answer:'৯২' },
+          { id:'as_q5', question:'৮৪ − ৩১ = ? (Borrow নেই)', visual:'  ৮৪\n- ৩১\n────', options:['৫১','৫২','৫৩','৫৪'], answer:'৫৩' },
+          { id:'as_q6', question:'৭৫ − ৪৮ = ? (Borrow আছে)', visual:'  ⁶¹৫\n  ৭⁵\n- ৪৮\n────', options:['২৫','২৬','২৭','২৮'], answer:'২৭' },
+          { id:'as_q7', question:'৯১ − ৫৩ = ? (Borrow আছে)', visual:'  ⁸¹১\n  ৯¹\n- ৫৩\n────', options:['৩৬','৩৭','৩৮','৩৯'], answer:'৩৮' },
+          { id:'as_q8', question:'৬০ − ৩৪ = ? (Borrow আছে)', visual:'  ⁵¹০\n  ৬⁰\n- ৩৪\n────', options:['২৪','২৫','২৬','২৭'], answer:'২৬' },
+          { id:'as_q9', question:'৪৭ + ৪৬ = ? (Carry আছে)', visual:'  ¹\n  ৪৭\n+ ৪৬\n────', options:['৮৩','৯১','৯৩','৯৫'], answer:'৯৩' },
+          { id:'as_q10', question:'৮৩ − ৫৭ = ? (Borrow আছে)', visual:'  ⁷¹৩\n  ৮³\n- ৫৭\n────', options:['২৪','২৫','২৬','২৭'], answer:'২৬' },
+          { id:'as_q11', question:'রিমার ৫৫টি স্টিকার আছে, নিলার ৩৭টি। একসাথে কতটি?', visual:'  ¹\n  ৫৫\n+ ৩৭\n────', options:['৮০','৯০','৯২','৯৫'], answer:'৯২' },
+          { id:'as_q12', question:'একটি দোকানে ৭৮টি কলম ছিল, ৩৯টি বিক্রি হলো। কতটি বাকি?', visual:'  ⁶¹৮\n  ৭⁸\n- ৩৯\n────', options:['৩৭','৩৮','৩৯','৪৯'], answer:'৩৯' },
+        ],
+      },
+      {
+        id: 'multiplication-division', title: 'গুণ ও ভাগ', subtitle: 'দল ও ভাগাভাগি!',
+        icon: '✖️', color: '#F9A826', bgGradient: 'linear-gradient(135deg, #F9A826, #FF6B35)', grade: 3,
+        slides: [
+          { title: '✖️ গুণ কী? — সমান দলের যোগ', story: '৩টি ব্যাগে ৪টি করে আপেল — মোট কতটি? বারবার যোগ না করে গুণ করো!', visual: 'উদাহরণ ১: ২ × ৩ = ৩+৩ = ৬\nউদাহরণ ২: ৩ × ৪ = ৪+৪+৪ = ১২\nউদাহরণ ৩: ৪ × ৫ = ৫+৫+৫+৫ = ২০\nউদাহরণ ৪: ৫ × ৬ = ৬+৬+৬+৬+৬ = ৩০\n\n🎒(🍎🍎🍎🍎) × ৩ = ১২\nমনে রাখো: ৩ × ৪ = ৪ × ৩ = ১২ ✅', explanation: 'গুণ = সমান দলের দ্রুত যোগ! ক × খ = খ + খ + খ... (ক বার)', tip: '💡 গুণ দুদিক থেকে একই: ৩×৫ = ৫×৩ = ১৫! এটাই গুণের বিনিময় সূত্র!' },
+          { title: '⭐ নামতা — ২, ৩, ৪, ৫-এর নামতা', story: 'নামতা মুখস্থ করলে সব গুণ সহজ হয়! ছবির মতো মনে রাখো!', visual: '২-এর নামতা:          ৫-এর নামতা:\n২×১=২   ২×৬=১২    ৫×১=৫   ৫×৬=৩০\n২×২=৪   ২×৭=১৪    ৫×২=১০  ৫×৭=৩৫\n২×৩=৬   ২×৮=১৬    ৫×৩=১৫  ৫×৮=৪০\n২×৪=৮   ২×৯=১৮    ৫×৪=২০  ৫×৯=৪৫\n২×৫=১০  ২×১০=২০   ৫×৫=২৫  ৫×১০=৫০', explanation: '২-এর নামতা = জোড় সংখ্যা! ৫-এর নামতা = সবসময় ০ বা ৫ দিয়ে শেষ!', tip: '💡 কৌশল: ৫-এর নামতায় সংখ্যা দ্বিগুণ করে ২ দিয়ে ভাগ করো! ৫×৮ = (৮×১০)÷২ = ৪০!' },
+          { title: '➗ ভাগ — গুণের উল্টো পথ', story: 'ভাগ মানে সমান ভাগ করা! গুণ জানলে ভাগ সহজ। কারণ ভাগ হলো গুণের উল্টো!', visual: 'উদাহরণ ১: ১২ ÷ ৩ = ৪   (৩×৪=১২)\nউদাহরণ ২: ২০ ÷ ৫ = ৪   (৫×৪=২০)\nউদাহরণ ৩: ৩৬ ÷ ৬ = ৬   (৬×৬=৩৬)\nউদাহরণ ৪: ৪৮ ÷ ৮ = ৬   (৮×৬=৪৮)\nউদাহরণ ৫: ৬৩ ÷ ৭ = ৯   (৭×৯=৬৩)\n\nসূত্র: ক÷খ = গ → খ×গ = ক ✅', explanation: 'ভাগ করার আগে ভাবো: ভাজক × ? = ভাজ্য। এই "?" ই ভাগফল!', tip: '💡 ভাগ পরীক্ষা: ৪৮÷৮=৬ কারণ ৮×৬=৪৮! সবসময় গুণ দিয়ে যাচাই করো!' },
+        ],
+        practice: [
+          { id:'md_p1', question:'২ × ৬ = কত?', visual:'২ × ৬ = ৬ + ৬ = ?', type:'multiple-choice', options:['১০','১১','১২','১৩'], answer:'১২', hint:'৬ + ৬ = ? অথবা ২-এর নামতায় ৬: ২×৬=?', explanation:'২ × ৬ = ১২! ৬+৬=১২ ✅' },
+          { id:'md_p2', question:'৫ × ৪ = কত?', visual:'৫ × ৪ = ৪+৪+৪+৪+৪ = ?', type:'multiple-choice', options:['১৮','২০','২২','২৪'], answer:'২০', hint:'৫-এর নামতায় ৪: ৫×৪ বা ৪+৪+৪+৪+৪=?', explanation:'৫ × ৪ = ২০! ৫-এর নামতা: ৫,১০,১৫,২০ ✅' },
+          { id:'md_p3', question:'৩ × ৭ = কত?', visual:'৩ × ৭ = ৭+৭+৭ = ?', type:'multiple-choice', options:['১৯','২০','২১','২২'], answer:'২১', hint:'৭ করে তিনবার গণনা করো: ৭, ১৪, ২১!', explanation:'৩ × ৭ = ২১! ৭+৭+৭=২১ ✅' },
+          { id:'md_p4', question:'৪ × ৮ = কত?', visual:'৪ × ৮ = ?', type:'multiple-choice', options:['২৮','৩০','৩২','৩৪'], answer:'৩২', hint:'৮ করে চারবার গণনা করো: ৮, ১৬, ২৪, ৩২!', explanation:'৪ × ৮ = ৩২! ৮,১৬,২৪,৩২ ✅' },
+          { id:'md_p5', question:'৬ × ৬ = কত?', visual:'৬ × ৬ = ?', type:'multiple-choice', options:['৩২','৩৪','৩৬','৩৮'], answer:'৩৬', hint:'৬ করে ছয়বার গণনা: ৬,১২,১৮,২৪,৩০,৩৬!', explanation:'৬ × ৬ = ৩৬! ✅' },
+          { id:'md_p6', question:'৫টি ঝুড়িতে ৬টি করে আম। মোট কতটি?', visual:'৫ ঝুড়ি × ৬টি আম = ?', type:'multiple-choice', options:['২৮','৩০','৩২','৩৫'], answer:'৩০', hint:'৫ × ৬ = ? অথবা ৫-এর নামতায় ৬!', explanation:'৫ × ৬ = ৩০টি আম! ✅' },
+          { id:'md_p7', question:'৯ × ৭ = কত?', visual:'৯ × ৭ = ?', type:'multiple-choice', options:['৬০','৬১','৬২','৬৩'], answer:'৬৩', hint:'৯-এর কৌশল: ৯×৭ = (১০×৭) - ৭ = ৭০ - ৭ = ?', explanation:'৯ × ৭ = ৬৩! ৯-এর কৌশল: ১০×৭=৭০, তারপর ৭ বিয়োগ → ৬৩ ✅' },
+          { id:'md_p8', question:'৮ × ৮ = কত?', visual:'৮ × ৮ = ?', type:'multiple-choice', options:['৬০','৬২','৬৪','৬৬'], answer:'৬৪', hint:'৮ করে আটবার গণনা: ৮,১৬,২৪,৩২,৪০,৪৮,৫৬,৬৪!', explanation:'৮ × ৮ = ৬৪! মনে রাখো: ৮×৮=৬৪ ✅' },
+          { id:'md_p9', question:'১৫ ÷ ৩ = কত?', visual:'১৫ ÷ ৩ = ?\n৩ × ? = ১৫', type:'multiple-choice', options:['৩','৪','৫','৬'], answer:'৫', hint:'৩ × ? = ১৫? ৩ করে গণনা: ৩,৬,৯,১২,১৫ — ৫ ধাপ!', explanation:'১৫ ÷ ৩ = ৫! কারণ ৩×৫=১৫ ✅' },
+          { id:'md_p10', question:'২৮ ÷ ৪ = কত?', visual:'২৮ ÷ ৪ = ?\n৪ × ? = ২৮', type:'multiple-choice', options:['৫','৬','৭','৮'], answer:'৭', hint:'৪ × ? = ২৮? ৪ করে: ৪,৮,১২,১৬,২০,২৪,২৮ — ৭ ধাপ!', explanation:'২৮ ÷ ৪ = ৭! কারণ ৪×৭=২৮ ✅' },
+          { id:'md_p11', question:'৪৫ ÷ ৫ = কত?', visual:'৪৫ ÷ ৫ = ?\n৫ × ? = ৪৫', type:'multiple-choice', options:['৭','৮','৯','১০'], answer:'৯', hint:'৫ × ? = ৪৫? ৫-এর নামতায়: ৫×৯=৪৫!', explanation:'৪৫ ÷ ৫ = ৯! কারণ ৫×৯=৪৫ ✅' },
+          { id:'md_p12', question:'৩৬ ÷ ৬ = কত?', visual:'৩৬ ÷ ৬ = ?', type:'multiple-choice', options:['৫','৬','৭','৮'], answer:'৬', hint:'৬ × ? = ৩৬? ৬,১২,১৮,২৪,৩০,৩৬ — ৬ ধাপ!', explanation:'৩৬ ÷ ৬ = ৬! কারণ ৬×৬=৩৬ ✅' },
+          { id:'md_p13', question:'৫৪ ÷ ৯ = কত?', visual:'৫৪ ÷ ৯ = ?', type:'number-input', answer:'6', hint:'৯ × ? = ৫৪? ৯,১৮,২৭,৩৬,৪৫,৫৪ — ৬ ধাপ!', explanation:'৫৪ ÷ ৯ = ৬! কারণ ৯×৬=৫৪ ✅' },
+          { id:'md_p14', question:'৩টি সারিতে ৮টি করে ফুল। মোট কতটি?', visual:'৩ সারি × ৮টি ফুল = ?', type:'number-input', answer:'24', hint:'৩ × ৮ = ? অথবা ৮+৮+৮=?', explanation:'৩ × ৮ = ২৪টি ফুল! ৮+৮+৮=২৪ ✅' },
+          { id:'md_p15', question:'৭২ ÷ ৮ = কত?', visual:'৭২ ÷ ৮ = ?', type:'number-input', answer:'9', hint:'৮ × ? = ৭২? ৮,১৬,২৪,৩২,৪০,৪৮,৫৬,৬৪,৭২ — ৯ ধাপ!', explanation:'৭২ ÷ ৮ = ৯! কারণ ৮×৯=৭২ ✅' },
+          { id:'md_p16', question:'৪ × ৯ = কত?', visual:'৪ × ৯ = ?', type:'multiple-choice', options:['৩২','৩৪','৩৬','৩৮'], answer:'৩৬', hint:'৯-এর কৌশল: ৪×৯ = ৪×১০-৪ = ৪০-৪ = ?', explanation:'৪ × ৯ = ৩৬! ৯-এর কৌশল: ৪০-৪=৩৬ ✅' },
+          { id:'md_p17', question:'৩২ ÷ ৪ = কত?', visual:'৩২ ÷ ৪ = ?', type:'multiple-choice', options:['৬','৭','৮','৯'], answer:'৮', hint:'৪ × ? = ৩২? ৪,৮,১২,১৬,২০,২৪,২৮,৩২!', explanation:'৩২ ÷ ৪ = ৮! কারণ ৪×৮=৩২ ✅' },
+          { id:'md_p18', question:'৭ × ৬ = কত?', visual:'৭ × ৬ = ?', type:'multiple-choice', options:['৩৮','৪০','৪২','৪৪'], answer:'৪২', hint:'৬ করে সাতবার: ৬,১২,১৮,২৪,৩০,৩৬,৪২!', explanation:'৭ × ৬ = ৪২! ✅' },
+          { id:'md_p19', question:'৬৪ ÷ ৮ = কত?', visual:'৬৪ ÷ ৮ = ?', type:'number-input', answer:'8', hint:'৮ × ? = ৬৪? মনে রাখো: ৮×৮=৬৪!', explanation:'৬৪ ÷ ৮ = ৮! কারণ ৮×৮=৬৪ ✅' },
+          { id:'md_p20', question:'২৪টি বিস্কুট ৬ জনে সমানভাগে ভাগ করলে প্রত্যেকে কতটি পাবে?', visual:'২৪ ÷ ৬ = ?', type:'number-input', answer:'4', hint:'৬ × ? = ২৪? ৬,১২,১৮,২৪ — ৪ ধাপ!', explanation:'২৪ ÷ ৬ = ৪টি বিস্কুট! কারণ ৬×৪=২৪ ✅' },
+          { id:'md_p12', question:'৩৬ ÷ ৬ = কত?', visual:'৩৬ ÷ ৬ = ?', type:'multiple-choice', options:['৫','৬','৭','৮'], answer:'৬', hint:'৬ × ? = ৩৬? ৬,১২,১৮,২৪,৩০,৩৬ — ৬ ধাপ!', explanation:'৩৬ ÷ ৬ = ৬! কারণ ৬×৬=৩৬ ✅' },
+          { id:'md_p13', question:'৫৪ ÷ ৯ = কত?', visual:'৫৪ ÷ ৯ = ?', type:'number-input', answer:'6', hint:'৯ × ? = ৫৪? ৯,১৮,২৭,৩৬,৪৫,৫৪ — ৬ ধাপ!', explanation:'৫৪ ÷ ৯ = ৬! কারণ ৯×৬=৫৪ ✅' },
+          { id:'md_p14', question:'৩টি সারিতে ৮টি করে ফুল। মোট কতটি?', visual:'৩ সারি × ৮টি ফুল = ?', type:'number-input', answer:'24', hint:'৩ × ৮ = ? অথবা ৮+৮+৮=?', explanation:'৩ × ৮ = ২৪টি ফুল! ৮+৮+৮=২৪ ✅' },
+          { id:'md_p15', question:'৭২ ÷ ৮ = কত?', visual:'৭২ ÷ ৮ = ?', type:'number-input', answer:'9', hint:'৮ × ? = ৭২? ৮,১৬,২৪,৩২,৪০,৪৮,৫৬,৬৪,৭২ — ৯ ধাপ!', explanation:'৭২ ÷ ৮ = ৯! কারণ ৮×৯=৭২ ✅' },
+          { id:'md_p16', question:'৪ × ৯ = কত?', visual:'৪ × ৯ = ?', type:'multiple-choice', options:['৩২','৩৪','৩৬','৩৮'], answer:'৩৬', hint:'৯-এর কৌশল: ৪×৯ = ৪×১০-৪ = ৪০-৪ = ?', explanation:'৪ × ৯ = ৩৬! ৯-এর কৌশল: ৪০-৪=৩৬ ✅' },
+          { id:'md_p17', question:'৩২ ÷ ৪ = কত?', visual:'৩২ ÷ ৪ = ?', type:'multiple-choice', options:['৬','৭','৮','৯'], answer:'৮', hint:'৪ × ? = ৩২? ৪,৮,১২,১৬,২০,২৪,২৮,৩২!', explanation:'৩২ ÷ ৪ = ৮! কারণ ৪×৮=৩২ ✅' },
+          { id:'md_p18', question:'৭ × ৬ = কত?', visual:'৭ × ৬ = ?', type:'multiple-choice', options:['৩৮','৪০','৪২','৪৪'], answer:'৪২', hint:'৬ করে সাতবার: ৬,১২,১৮,২৪,৩০,৩৬,৪২!', explanation:'৭ × ৬ = ৪২! ✅' },
+          { id:'md_p19', question:'৬৪ ÷ ৮ = কত?', visual:'৬৪ ÷ ৮ = ?', type:'number-input', answer:'8', hint:'৮ × ? = ৬৪? মনে রাখো: ৮×৮=৬৪!', explanation:'৬৪ ÷ ৮ = ৮! কারণ ৮×৮=৬৪ ✅' },
+          { id:'md_p20', question:'২৪টি বিস্কুট ৬ জনে সমানভাগে ভাগ করলে প্রত্যেকে কতটি পাবে?', visual:'২৪ ÷ ৬ = ?', type:'number-input', answer:'4', hint:'৬ × ? = ২৪? ৬,১২,১৮,২৪ — ৪ ধাপ!', explanation:'২৪ ÷ ৬ = ৪টি বিস্কুট! কারণ ৬×৪=২৪ ✅' },
+        ],
+        quiz: [
+          { id:'md_q1', question:'৩ × ৬ = ?', visual:'3️⃣ ✖️ 6️⃣', options:['১৫','১৬','১৮','২১'], answer:'১৮' },
+          { id:'md_q2', question:'৮ × ৫ = ?', visual:'8️⃣ ✖️ 5️⃣', options:['৩৫','৪০','৪৫','৫০'], answer:'৪০' },
+          { id:'md_q3', question:'২৪ ÷ ৮ = ?', visual:'2️⃣4️⃣ ➗ 8️⃣', options:['২','৩','৪','৫'], answer:'৩' },
+          { id:'md_q4', question:'৭ × ৭ = ?', visual:'৭ × ৭ = ?', options:['৪৫','৪৭','৪৯','৫১'], answer:'৪৯' },
+          { id:'md_q5', question:'৯ × ৯ = ?', visual:'9️⃣ ✖️ 9️⃣', options:['৭৯','৮১','৮২','৯০'], answer:'৮১' },
+          { id:'md_q6', question:'৫৬ ÷ ৭ = ?', visual:'৫৬ ÷ ৭ = ?', options:['৬','৭','৮','৯'], answer:'৮' },
+          { id:'md_q7', question:'৪ × ৬ = ?', visual:'৪ × ৬ = ?', options:['২০','২২','২৪','২৬'], answer:'২৪' },
+          { id:'md_q8', question:'৪২ ÷ ৬ = ?', visual:'৪২ ÷ ৬ = ?', options:['৫','৬','৭','৮'], answer:'৭' },
+          { id:'md_q9', question:'৭ জন শিশু ৪৯টি মিষ্টি সমানভাগে নিলে প্রত্যেকে কতটি?', visual:'৪৯ ÷ ৭ = ?', options:['৫','৬','৭','৮'], answer:'৭' },
+          { id:'md_q10', question:'৫ × ৯ = ?', visual:'৫ × ৯ = ?', options:['৪০','৪৩','৪৫','৪৭'], answer:'৪৫' },
+          { id:'md_q11', question:'৮১ ÷ ৯ = ?', visual:'৮১ ÷ ৯ = ?', options:['৭','৮','৯','১০'], answer:'৯' },
+          { id:'md_q12', question:'৬ × ৮ = ?', visual:'৬ × ৮ = ?', options:['৪৬','৪৮','৫০','৫২'], answer:'৪৮' },
+        ],
+      },
+      {
+        id: 'fractions-decimals', title: 'ভগ্নাংশ ও দশমিক', subtitle: 'সম্পূর্ণের অংশ!',
+        icon: '🍕', color: '#E74C3C', bgGradient: 'linear-gradient(135deg, #E74C3C, #8E44AD)', grade: 4,
+        slides: [
+          { title: '🍕 ভগ্নাংশ কী? — লব ও হর', story: 'পিজ্জা ৪ টুকরো কাটা, তুমি ১ টুকরো খেলে = ১/৪। লব হলো তোমার টুকরো, হর হলো মোট টুকরো!', visual: 'উদাহরণ ১: ৪ টুকরোর মধ্যে ১ = ১/৪\nউদাহরণ ২: ৬ টুকরোর মধ্যে ২ = ২/৬ = ১/৩\nউদাহরণ ৩: ৮ টুকরোর মধ্যে ৪ = ৪/৮ = ১/২\nউদাহরণ ৪: ৫ টুকরোর মধ্যে ৩ = ৩/৫\nউদাহরণ ৫: ১০ টুকরোর মধ্যে ৭ = ৭/১০\n\nলব (উপরে) → কতটি আমার\nহর (নিচে) → মোট টুকরো ✅', explanation: 'ভগ্নাংশ সূত্র: আমার টুকরো / মোট টুকরো = লব / হর', tip: '💡 লব < হর → সঠিক ভগ্নাংশ (১ এর কম)! লব = হর → পূর্ণ সংখ্যা (= ১)!' },
+          { title: '🌈 ভগ্নাংশের তুলনা ও সরলীকরণ', story: 'একই হর হলে বড় লব = বড় ভগ্নাংশ। ভিন্ন হর হলে সমান হর বানাও!', visual: 'একই হর: ৩/৮ < ৫/৮ (৩ < ৫)\n\nসরলীকরণ:\n২/৪ = ১/২  (÷২)\n৪/৬ = ২/৩  (÷২)\n৬/৯ = ২/৩  (÷৩)\n৮/১২ = ২/৩ (÷৪)\n\nভিন্ন হর তুলনা:\n১/২ বনাম ১/৩\n→ ৩/৬ বনাম ২/৬ → ১/২ > ১/৩ ✅', explanation: 'সরলীকরণ: লব ও হর উভয়কে একই সংখ্যা দিয়ে ভাগ করো! তুলনায়: হর সমান বানাও!', tip: '💡 ২/৪ = ১/২ কারণ ২÷২=১, ৪÷২=২। সরলীকরণ = মান একই রেখে ছোট করা!' },
+          { title: '💫 দশমিক ও ভগ্নাংশ রূপান্তর', story: 'দশমিক ও ভগ্নাংশ একই জিনিস, শুধু লেখার পার্থক্য! ১/২ = ০.৫, ১/৪ = ০.২৫!', visual: 'ভগ্নাংশ → দশমিক (÷ করো):\n১/২ = ১÷২ = ০.৫\n১/৪ = ১÷৪ = ০.২৫\n৩/৪ = ৩÷৪ = ০.৭৫\n১/৫ = ১÷৫ = ০.২\n২/৫ = ২÷৫ = ০.৪\n\nদশমিক → ভগ্নাংশ:\n০.৫ = ৫/১০ = ১/২\n০.২৫ = ২৫/১০০ = ১/৪\n০.৬ = ৬/১০ = ৩/৫ ✅', explanation: 'ভগ্নাংশ → দশমিক: লব ÷ হর করো! দশমিক → ভগ্নাংশ: /১০ বা /১০০ লিখে সরল করো!', tip: '💡 মুখস্থ করো: ১/২=০.৫, ১/৪=০.২৫, ৩/৪=০.৭৫, ১/৫=০.২, ১/১০=০.১!' },
+        ],
+        practice: [
+          { id:'fd_p1', question:'একটি চকোলেটে ৮ টুকরো। রিয়া ৩টি খেলো। সে কত অংশ খেয়েছে?', visual:'৮-এর মধ্যে ৩ টুকরো = ?', type:'multiple-choice', options:['৩/৫','৩/৮','৫/৮','৮/৩'], answer:'৩/৮', hint:'ভগ্নাংশ = খাওয়া / মোট = ৩ / ৮', explanation:'৩/৮! ভগ্নাংশ = লব (খেয়েছে) / হর (মোট) ✅' },
+          { id:'fd_p2', question:'১২ টুকরো পাউরুটির মধ্যে ৪টি খেলে কত অংশ খাওয়া হলো?', visual:'১২-এর মধ্যে ৪ টুকরো = ?', type:'multiple-choice', options:['১/৩','৪/১২','উভয়ই সঠিক','৪/৮'], answer:'উভয়ই সঠিক', hint:'৪/১২ = ১/৩ (সরলীকরণ: ÷৪)! উভয়ই সমান!', explanation:'৪/১২ = ১/৩! কারণ ৪÷৪=১, ১২÷৪=৩ ✅' },
+          { id:'fd_p3', question:'কোন ভগ্নাংশটি বড়: ৩/৮ নাকি ৫/৮?', visual:'৩/৮  🆚  ৫/৮\n(হর সমান!)', type:'multiple-choice', options:['৩/৮','৫/৮','দুটো সমান','বলা যায় না'], answer:'৫/৮', hint:'হর সমান (৮=৮)! তাই লব তুলনা করো: ৩ বনাম ৫!', explanation:'৫/৮ বড়! হর সমান হলে বড় লব = বড় ভগ্নাংশ ✅' },
+          { id:'fd_p4', question:'কোন ভগ্নাংশটি বড়: ১/২ নাকি ১/৪?', visual:'১/২  🆚  ১/৪\n(পিজ্জার অর্ধেক বনাম চতুর্থাংশ)', type:'multiple-choice', options:['১/২','১/৪','দুটো সমান','তুলনা হয় না'], answer:'১/২', hint:'হর ছোট হলে টুকরো বড়! ২ < ৪, তাই ১/২ > ১/৪!', explanation:'১/২ বড়! ১/২=৩/৬, ১/৩=২/৬ → ৩>২ ✅' },
+          { id:'fd_p5', question:'৬/৮ সরল করলে কত হয়?', visual:'৬/৮ = ?/? (÷২)', type:'multiple-choice', options:['১/২','২/৩','৩/৪','৪/৬'], answer:'৩/৪', hint:'৬÷২=৩, ৮÷২=৪। তাই ৬/৮ = ?/৪', explanation:'৬/৮ = ৩/৪! কারণ ৬÷২=৩ এবং ৮÷২=৪ ✅' },
+          { id:'fd_p6', question:'৪/১২ সরল করলে কত হয়?', visual:'৪/১২ = ?/? (÷৪)', type:'multiple-choice', options:['১/৩','২/৬','১/৪','২/৪'], answer:'১/৩', hint:'৪÷৪=১, ১২÷৪=৩। তাই ৪/১২ = ?/৩', explanation:'৪/১২ = ১/৩! কারণ ৪÷৪=১ এবং ১২÷৪=৩ ✅' },
+          { id:'fd_p7', question:'১/২ দশমিকে কত?', visual:'১/২ = ১ ÷ ২ = ?', type:'multiple-choice', options:['০.২','০.৫','১.২','২.০'], answer:'০.৫', hint:'১ ÷ ২ = ০.৫! অথবা মুখস্থ: ১/২ = ০.৫!', explanation:'১/২ = ০.৫! ✅' },
+          { id:'fd_p8', question:'১/৪ দশমিকে কত?', visual:'১/৪ = ১ ÷ ৪ = ?', type:'multiple-choice', options:['০.১৪','০.২৫','০.৪','০.৫'], answer:'০.২৫', hint:'১ ÷ ৪ = ০.২৫! মুখস্থ করো: ১/৪ = ০.২৫!', explanation:'১/৪ = ০.২৫! টাকায়: ২৫ পয়সা = ১ টাকার ১/৪ ✅' },
+          { id:'fd_p9', question:'৩/৪ দশমিকে কত?', visual:'৩/৪ = ৩ ÷ ৪ = ?', type:'multiple-choice', options:['০.২৫','০.৫০','০.৭৫','০.৩৪'], answer:'০.৭৫', hint:'৩ ÷ ৪ = ০.৭৫! অথবা: ১/৪=০.২৫, তাই ৩/৪=৩×০.২৫=?', explanation:'৩/৪ = ০.৭৫! টাকায়: ৭৫ পয়সা = ১ টাকার ৩/৪ ✅' },
+          { id:'fd_p10', question:'০.৫ ভগ্নাংশ হিসেবে কত?', visual:'০.৫ = ৫/১০ = ?/? (সরল)', type:'multiple-choice', options:['১/৫','১/৪','১/২','১/৩'], answer:'১/২', hint:'০.৫ = ৫/১০। সরল করো: ৫÷৫=১, ১০÷৫=২!', explanation:'০.৫ = ৫/১০ = ১/২! ✅' },
+          { id:'fd_p11', question:'০.২৫ ভগ্নাংশ হিসেবে কত?', visual:'০.২৫ = ২৫/১০০ = ?/? (সরল)', type:'multiple-choice', options:['১/৫','১/৪','১/২','১/৩'], answer:'১/৪', hint:'০.২৫ = ২৫/১০০। সরল: ২৫÷২৫=১, ১০০÷২৫=৪!', explanation:'০.২৫ = ২৫/১০০ = ১/৪! ✅' },
+          { id:'fd_p12', question:'১/৫ দশমিকে কত?', visual:'১/৫ = ১ ÷ ৫ = ?', type:'multiple-choice', options:['০.১','০.২','০.৫','১.৫'], answer:'০.২', hint:'১ ÷ ৫ = ০.২! মনে রাখো: ১/৫ = ০.২!', explanation:'১/৫ = ০.২! ✅' },
+          { id:'fd_p13', question:'একটি দড়ির ৩/৫ অংশ লাল, বাকি অংশ নীল। নীল অংশ কত?', visual:'মোট = ১ = ৫/৫\nলাল = ৩/৫\nনীল = ?/৫', type:'multiple-choice', options:['১/৫','২/৫','৩/৫','৪/৫'], answer:'২/৫', hint:'নীল = ৫/৫ - ৩/৫ = (৫-৩)/৫ = ?/৫', explanation:'নীল = ৫/৫ - ৩/৫ = ২/৫! ✅' },
+          { id:'fd_p14', question:'কোনটি বড়: ২/৩ নাকি ৩/৪?', visual:'২/৩  🆚  ৩/৪\n(হর আলাদা!)', type:'multiple-choice', options:['২/৩','৩/৪','দুটো সমান','বলা যায় না'], answer:'৩/৪', hint:'২/৩=৮/১২, ৩/৪=৯/১২। কোনটি বড়?', explanation:'৩/৪ বড়! ৮/১২ < ৯/১২, তাই ২/৩ < ৩/৪ ✅' },
+          { id:'fd_p15', question:'০.৭৫ ভগ্নাংশ হিসেবে কত?', visual:'০.৭৫ = ৭৫/১০০ = ?/? (সরল)', type:'multiple-choice', options:['১/২','২/৩','৩/৪','৪/৫'], answer:'৩/৪', hint:'৭৫/১০০ সরল: ৭৫÷২৫=৩, ১০০÷২৫=৪!', explanation:'০.৭৫ = ৭৫/১০০ = ৩/৪! ✅' },
+          { id:'fd_p16', question:'১/২ + ১/২ = কত?', visual:'১/২ + ১/২ = ?/২', type:'multiple-choice', options:['১/২','১','২','২/৪'], answer:'১', hint:'হর সমান! শুধু লব যোগ: ১+১=২, তাই ২/২=?', explanation:'১/২ + ১/২ = ২/২ = ১ (পুরো)! ✅' },
+          { id:'fd_p17', question:'৩/৫ + ১/৫ = কত?', visual:'৩/৫ + ১/৫ = ?/৫', type:'multiple-choice', options:['৩/৫','৪/৫','৪/১০','১'], answer:'৪/৫', hint:'হর সমান (৫=৫)! লব যোগ: ৩+১=৪। উত্তর: ৪/৫!', explanation:'৩/৫ + ১/৫ = ৪/৫! হর একই থাকে, লব যোগ হয় ✅' },
+          { id:'fd_p18', question:'৫/৬ - ২/৬ = কত?', visual:'৫/৬ - ২/৬ = ?/৬', type:'multiple-choice', options:['২/৬','৩/৬','৩/০','৭/৬'], answer:'৩/৬', hint:'হর সমান! লব বিয়োগ: ৫-২=৩। উত্তর: ৩/৬!', explanation:'৫/৬ - ২/৬ = ৩/৬ = ১/২! ✅' },
+          { id:'fd_p19', question:'০.৪ ভগ্নাংশ হিসেবে কত?', visual:'০.৪ = ৪/১০ = ?/? (সরল)', type:'multiple-choice', options:['১/৪','২/৫','৪/৫','১/৫'], answer:'২/৫', hint:'৪/১০ সরল: ৪÷২=২, ১০÷২=৫!', explanation:'০.৪ = ৪/১০ = ২/৫! ✅' },
+          { id:'fd_p20', question:'একটি ওয়াটারমেলন ৮ টুকরো কাটা হলো। রিমা ও তার বন্ধু মিলে ৬ টুকরো খেলো। কত অংশ বাকি?', visual:'মোট = ৮/৮\nখাওয়া = ৬/৮\nবাকি = ?/৮', type:'multiple-choice', options:['১/৮','২/৮','৩/৮','৪/৮'], answer:'২/৮', hint:'বাকি = ৮/৮ - ৬/৮ = (৮-৬)/৮ = ?/৮', explanation:'বাকি = ২/৮ = ১/৪! ৮-৬=২, তাই ২/৮ বাকি ✅' },
+        ],
+        quiz: [
+          { id:'fd_q1', question:'একটি পাই ৬ টুকরোয় কাটা। তুমি ২টি খেলে কত অংশ খেয়েছ?', visual:'৬-এর মধ্যে ২ টুকরো', options:['১/৩','২/৬','উভয়ই সঠিক','১/২'], answer:'উভয়ই সঠিক' },
+          { id:'fd_q2', question:'কোনটি ছোট: ১/৩ নাকি ১/৬?', visual:'১/৩ 🆚 ১/৬', options:['১/৩','১/৬','দুটো সমান','বলা যাচ্ছে না'], answer:'১/৬' },
+          { id:'fd_q3', question:'১/৪ দশমিকে কত?', visual:'১ ÷ ৪ = ?', options:['০.১৪','০.২৫','০.৪০','০.৫০'], answer:'০.২৫' },
+          { id:'fd_q4', question:'১/২ + ১/৪ = ?', visual:'🍕 অর্ধেক + 🍕 এক চতুর্থাংশ', options:['১/৬','২/৬','৩/৪','১/২'], answer:'৩/৪' },
+          { id:'fd_q5', question:'০.১ ভগ্নাংশ হিসেবে কত?', visual:'০.১ = ?/১০', options:['১/১০','১/১০০','১০/১','১/১০০০'], answer:'১/১০' },
+          { id:'fd_q6', question:'৪/৮ সরল করলে কত?', visual:'৪/৮ = ?/? (÷৪)', options:['১/২','১/৩','২/৩','২/৪'], answer:'১/২' },
+          { id:'fd_q7', question:'কোনটি বড়: ২/৫ নাকি ৪/৫?', visual:'২/৫ 🆚 ৪/৫', options:['২/৫','৪/৫','দুটো সমান','বলা যায় না'], answer:'৪/৫' },
+          { id:'fd_q8', question:'১/৫ দশমিকে কত?', visual:'১ ÷ ৫ = ?', options:['০.১','০.২','০.৫','১.৫'], answer:'০.২' },
+          { id:'fd_q9', question:'৪/৬ - ১/৬ = ?', visual:'৪/৬ - ১/৬ = ?/৬', options:['২/৬','৩/৬','৪/৬','৫/৬'], answer:'৩/৬' },
+          { id:'fd_q10', question:'০.৫ ভগ্নাংশ হিসেবে কত?', visual:'০.৫ = ৫/১০ = ?', options:['১/৫','১/৪','১/২','১/৩'], answer:'১/২' },
+          { id:'fd_q11', question:'৩/৫ + ২/৫ = ?', visual:'৩/৫ + ২/৫ = ?/৫', options:['৪/৫','৫/৫','১','উভয় ৫/৫ ও ১ সঠিক'], answer:'উভয় ৫/৫ ও ১ সঠিক' },
+          { id:'fd_q12', question:'কোনটি বড়: ১/২ নাকি ২/৩?', visual:'১/২ 🆚 ২/৩', options:['১/২','২/৩','দুটো সমান','বলা যায় না'], answer:'২/৩' },
+        ],
+      },
+      {
+        id: 'geometry', title: 'জ্যামিতি', subtitle: 'আকার, ক্ষেত্রফল ও কোণ!',
+        icon: '📐', color: '#27AE60', bgGradient: 'linear-gradient(135deg, #27AE60, #2ECC71)', grade: 5,
+        slides: [
+          { title: '� জ্যামিতিক আকার — বৈশিষ্ট্য চেনো', story: 'প্রতিটি আকারের নিজস্ব বৈশিষ্ট্য আছে — বাহু, কোণ, কর্ণ। শিখলে সহজেই চেনা যাবে!', visual: 'আকার      বাহু  কোণ  বৈশিষ্ট্য\nত্রিভুজ     ৩    ৩    কোণের যোগ=১৮০°\nচতুর্ভুজ   ৪    ৪    কোণের যোগ=৩৬০°\nআয়তক্ষেত্র ৪    ৪    বিপরীত বাহু সমান\nবর্গক্ষেত্র  ৪    ৪    সব বাহু সমান, সব কোণ ৯০°\nপঞ্চভুজ    ৫    ৫    কোণের যোগ=৫৪০°\nষড়ভুজ    ৬    ৬    মৌমাছির চাক!', explanation: 'মনে রাখো: ত্রিভুজ=৩, চতুর্ভুজ=৪, পঞ্চভুজ=৫, ষড়ভুজ=৬ বাহু!', tip: '💡 বর্গক্ষেত্র = বিশেষ আয়তক্ষেত্র যেখানে সব বাহু সমান! বর্গ ⊂ আয়তক্ষেত্র!' },
+          { title: '📏 পরিধি — চারদিকের মাপ', story: 'পরিধি = বাহুগুলো মাপা + একসাথে যোগ। একটি মাঠের চারপাশ হাঁটলে যতটুকু পথ = পরিধি!', visual: 'বর্গক্ষেত্র (৫ সেমি বাহু):\nপরিধি = ৪ × ৫ = ২০ সেমি\n\nআয়তক্ষেত্র (৬ সেমি × ৪ সেমি):\nপরিধি = ২ × (৬+৪) = ২ × ১০ = ২০ সেমি\n\nত্রিভুজ (৩, ৪, ৫ সেমি):\nপরিধি = ৩+৪+৫ = ১২ সেমি\n\nপঞ্চভুজ (৩ সেমি প্রতি বাহু):\nপরিধি = ৫ × ৩ = ১৫ সেমি', explanation: 'পরিধি সূত্র: বর্গ = ৪×বাহু | আয়তক্ষেত্র = ২×(দৈর্ঘ্য+প্রস্থ) | ত্রিভুজ = তিন বাহুর যোগ!', tip: '💡 পরিধি = বাইরের সীমানার দৈর্ঘ্য। এককে সবসময় সেমি/মিটার লিখতে ভুলো না!' },
+          { title: '🟦 ক্ষেত্রফল — ভেতরের জায়গার মাপ', story: 'ক্ষেত্রফল = ভেতরের জায়গা। ঘরের মেঝেতে কতটি টাইলস লাগবে সেটাই ক্ষেত্রফল!', visual: 'বর্গক্ষেত্র (৫ সেমি):\nক্ষেত্রফল = ৫ × ৫ = ২৫ বর্গ সেমি\n\nআয়তক্ষেত্র (৮ × ৫ সেমি):\nক্ষেত্রফল = ৮ × ৫ = ৪০ বর্গ সেমি\n\nআয়তক্ষেত্র (১০ × ৬ সেমি):\nক্ষেত্রফল = ১০ × ৬ = ৬০ বর্গ সেমি\n\nত্রিভুজ (ভূমি=৬, উচ্চতা=৪):\nক্ষেত্রফল = (৬ × ৪) ÷ ২ = ১২ বর্গ সেমি', explanation: 'ক্ষেত্রফল: বর্গ = বাহু² | আয়তক্ষেত্র = দৈর্ঘ্য × প্রস্থ | ত্রিভুজ = (ভূমি × উচ্চতা) ÷ ২!', tip: '💡 একক: সেমি² বা বর্গ সেমি (দুটো সংখ্যার গুণ → বর্গ একক)!' },
+        ],
+        practice: [
+          { id:'geo_p1', question:'কোন আকারের ৩টি বাহু ও ৩টি কোণ আছে?', visual:'আকারের নাম মনে করো...', type:'multiple-choice', options:['বর্গক্ষেত্র','আয়তক্ষেত্র','ত্রিভুজ','পঞ্চভুজ'], answer:'ত্রিভুজ', hint:'৩ বাহু = "ত্রি" (তিন)!', explanation:'ত্রিভুজ! ত্রি=৩, ভুজ=বাহু ✅' },
+          { id:'geo_p2', question:'বর্গক্ষেত্রের বাহু ৭ সেমি। পরিধি কত?', visual:'বর্গক্ষেত্র: বাহু = ৭ সেমি\nপরিধি = ৪ × বাহু = ?', type:'multiple-choice', options:['১৪ সেমি','২১ সেমি','২৮ সেমি','৪৯ সেমি'], answer:'২৮ সেমি', hint:'বর্গের পরিধি = ৪ × বাহু = ৪ × ৭ = ?', explanation:'পরিধি = ৪ × ৭ = ২৮ সেমি! ✅' },
+          { id:'geo_p3', question:'আয়তক্ষেত্রের দৈর্ঘ্য ৯ সেমি, প্রস্থ ৫ সেমি। পরিধি কত?', visual:'আয়তক্ষেত্র: ৯ সেমি × ৫ সেমি\nপরিধি = ২ × (দৈর্ঘ্য + প্রস্থ) = ?', type:'multiple-choice', options:['২৮ সেমি','২৬ সেমি','২৪ সেমি','৪৫ সেমি'], answer:'২৮ সেমি', hint:'পরিধি = ২×(৯+৫) = ২×১৪ = ?', explanation:'পরিধি = ২×(৯+৫) = ২×১৪ = ২৮ সেমি! ✅' },
+          { id:'geo_p4', question:'বর্গক্ষেত্রের বাহু ৬ সেমি। ক্ষেত্রফল কত?', visual:'বর্গক্ষেত্র: বাহু = ৬ সেমি\nক্ষেত্রফল = বাহু × বাহু = ?', type:'multiple-choice', options:['২৪ বর্গ সেমি','৩০ বর্গ সেমি','৩৬ বর্গ সেমি','৪৮ বর্গ সেমি'], answer:'৩৬ বর্গ সেমি', hint:'ক্ষেত্রফল = ৬ × ৬ = ?', explanation:'ক্ষেত্রফল = ৬ × ৬ = ৩৬ বর্গ সেমি! ✅' },
+          { id:'geo_p5', question:'আয়তক্ষেত্রের দৈর্ঘ্য ১০ সেমি, প্রস্থ ৪ সেমি। ক্ষেত্রফল কত?', visual:'আয়তক্ষেত্র: ১০ সেমি × ৪ সেমি\nক্ষেত্রফল = দৈর্ঘ্য × প্রস্থ = ?', type:'multiple-choice', options:['২৮ বর্গ সেমি','৩৬ বর্গ সেমি','৪০ বর্গ সেমি','৪৪ বর্গ সেমি'], answer:'৪০ বর্গ সেমি', hint:'ক্ষেত্রফল = ১০ × ৪ = ?', explanation:'ক্ষেত্রফল = ১০ × ৪ = ৪০ বর্গ সেমি! ✅' },
+          { id:'geo_p6', question:'কোন আকারের সব বাহু সমান এবং সব কোণ ৯০°?', visual:'বাহু সমান + কোণ ৯০° = ?', type:'multiple-choice', options:['ত্রিভুজ','আয়তক্ষেত্র','বর্গক্ষেত্র','বৃত্ত'], answer:'বর্গক্ষেত্র', hint:'বর্গক্ষেত্র: ৪ সমান বাহু + ৪ টি ৯০° কোণ!', explanation:'বর্গক্ষেত্র! এটি বিশেষ আয়তক্ষেত্র যার সব বাহু সমান ✅' },
+          { id:'geo_p7', question:'ত্রিভুজের বাহু তিনটির দৈর্ঘ্য: ৫, ৭, ৯ সেমি। পরিধি কত?', visual:'ত্রিভুজ: বাহু ৫ সেমি + ৭ সেমি + ৯ সেমি\nপরিধি = ?', type:'multiple-choice', options:['১৮ সেমি','১৯ সেমি','২০ সেমি','২১ সেমি'], answer:'২১ সেমি', hint:'পরিধি = সব বাহুর যোগ = ৫+৭+৯ = ?', explanation:'পরিধি = ৫+৭+৯ = ২১ সেমি! ✅' },
+          { id:'geo_p8', question:'পঞ্চভুজের প্রতিটি বাহু ৪ সেমি। পরিধি কত?', visual:'পঞ্চভুজ: ৫টি বাহু, প্রতিটি ৪ সেমি\nপরিধি = ৫ × ৪ = ?', type:'multiple-choice', options:['১৬ সেমি','২০ সেমি','২৪ সেমি','২৮ সেমি'], answer:'২০ সেমি', hint:'পঞ্চভুজের ৫ বাহু। পরিধি = ৫ × ৪ = ?', explanation:'পরিধি = ৫ × ৪ = ২০ সেমি! ✅' },
+          { id:'geo_p9', question:'আয়তক্ষেত্রের দৈর্ঘ্য ১২ সেমি, প্রস্থ ৭ সেমি। পরিধি কত?', visual:'আয়তক্ষেত্র: ১২ সেমি × ৭ সেমি', type:'multiple-choice', options:['৩৬ সেমি','৩৮ সেমি','৪০ সেমি','৪২ সেমি'], answer:'৩৮ সেমি', hint:'পরিধি = ২×(১২+৭) = ২×১৯ = ?', explanation:'পরিধি = ২×(১২+৭) = ২×১৯ = ৩৮ সেমি! ✅' },
+          { id:'geo_p10', question:'একটি বর্গক্ষেত্রের পরিধি ২৪ সেমি। এক বাহুর দৈর্ঘ্য কত?', visual:'পরিধি = ৪ × বাহু = ২৪\nবাহু = ?', type:'multiple-choice', options:['৪ সেমি','৫ সেমি','৬ সেমি','৮ সেমি'], answer:'৬ সেমি', hint:'৪ × বাহু = ২৪। বাহু = ২৪ ÷ ৪ = ?', explanation:'বাহু = ২৪ ÷ ৪ = ৬ সেমি! ✅' },
+          { id:'geo_p11', question:'আয়তক্ষেত্রের দৈর্ঘ্য ৮ সেমি, প্রস্থ ৩ সেমি। ক্ষেত্রফল কত?', visual:'আয়তক্ষেত্র: ৮ × ৩ সেমি\nক্ষেত্রফল = ?', type:'multiple-choice', options:['১৮ বর্গ সেমি','২২ বর্গ সেমি','২৪ বর্গ সেমি','২৬ বর্গ সেমি'], answer:'২৪ বর্গ সেমি', hint:'ক্ষেত্রফল = ৮ × ৩ = ?', explanation:'ক্ষেত্রফল = ৮ × ৩ = ২৪ বর্গ সেমি! ✅' },
+          { id:'geo_p12', question:'বর্গক্ষেত্রের বাহু ৯ সেমি। ক্ষেত্রফল কত?', visual:'বর্গক্ষেত্র: বাহু = ৯ সেমি\nক্ষেত্রফল = বাহু² = ?', type:'number-input', answer:'81', hint:'ক্ষেত্রফল = ৯ × ৯ = ?', explanation:'ক্ষেত্রফল = ৯ × ৯ = ৮১ বর্গ সেমি! ✅' },
+          { id:'geo_p13', question:'একটি ঘরের মেঝে ১৫ মি × ৮ মি। ক্ষেত্রফল কত?', visual:'মেঝে: ১৫ মি × ৮ মি\nক্ষেত্রফল = ?', type:'number-input', answer:'120', hint:'ক্ষেত্রফল = ১৫ × ৮ = ?', explanation:'ক্ষেত্রফল = ১৫ × ৮ = ১২০ বর্গ মি! ✅' },
+          { id:'geo_p14', question:'ষড়ভুজের প্রতিটি বাহু ৫ সেমি। পরিধি কত?', visual:'ষড়ভুজ: ৬টি বাহু, প্রতিটি ৫ সেমি', type:'multiple-choice', options:['২৫ সেমি','৩০ সেমি','৩৫ সেমি','৩৬ সেমি'], answer:'৩০ সেমি', hint:'ষড়ভুজের ৬ বাহু। পরিধি = ৬ × ৫ = ?', explanation:'পরিধি = ৬ × ৫ = ৩০ সেমি! ✅' },
+          { id:'geo_p15', question:'একটি বাগানের আয়তক্ষেত্র ২০ মি × ১৫ মি। পরিধিতে বেড়া দিতে কত মিটার লাগবে?', visual:'বাগান: ২০ মি × ১৫ মি\nপরিধি = ২×(২০+১৫) = ?', type:'multiple-choice', options:['৬০ মি','৬৫ মি','৭০ মি','৩০০ মি'], answer:'৭০ মি', hint:'পরিধি = ২×(২০+১৫) = ২×৩৫ = ?', explanation:'পরিধি = ২×৩৫ = ৭০ মি! ✅' },
+          { id:'geo_p16', question:'কোন আকারের ৬ বাহু ও ৬ কোণ আছে?', visual:'৬ বাহু = ?', type:'multiple-choice', options:['পঞ্চভুজ','ষড়ভুজ','সপ্তভুজ','অষ্টভুজ'], answer:'ষড়ভুজ', hint:'ষড় = ৬! ষড়ভুজ = ৬ বাহুর আকার!', explanation:'ষড়ভুজ! ষড়=৬, ভুজ=বাহু ✅' },
+          { id:'geo_p17', question:'আয়তক্ষেত্রের ক্ষেত্রফল ৪৮ বর্গ সেমি, প্রস্থ ৬ সেমি। দৈর্ঘ্য কত?', visual:'ক্ষেত্রফল = দৈর্ঘ্য × ৬ = ৪৮\nদৈর্ঘ্য = ?', type:'multiple-choice', options:['৬ সেমি','৭ সেমি','৮ সেমি','৯ সেমি'], answer:'৮ সেমি', hint:'দৈর্ঘ্য = ক্ষেত্রফল ÷ প্রস্থ = ৪৮ ÷ ৬ = ?', explanation:'দৈর্ঘ্য = ৪৮ ÷ ৬ = ৮ সেমি! ✅' },
+          { id:'geo_p18', question:'বর্গক্ষেত্রের ক্ষেত্রফল ৬৪ বর্গ সেমি। এক বাহুর দৈর্ঘ্য কত?', visual:'বর্গক্ষেত্র: বাহু × বাহু = ৬৪\nবাহু = ?', type:'multiple-choice', options:['৬ সেমি','৭ সেমি','৮ সেমি','৯ সেমি'], answer:'৮ সেমি', hint:'বাহু × বাহু = ৬৪। কোন সংখ্যার বর্গ ৬৪? ৮×৮=?', explanation:'বাহু = ৮ সেমি! কারণ ৮×৮=৬৪ ✅' },
+          { id:'geo_p19', question:'একটি ফুটবল মাঠ ৯০ মি × ৬০ মি। পরিধি কত?', visual:'মাঠ: ৯০ মি × ৬০ মি\nপরিধি = ২×(৯০+৬০) = ?', type:'number-input', answer:'300', hint:'পরিধি = ২×(৯০+৬০) = ২×১৫০ = ?', explanation:'পরিধি = ২×১৫০ = ৩০০ মি! ✅' },
+          { id:'geo_p20', question:'একটি টেবিলের উপরিভাগ ৫ মি × ৩ মি। ক্ষেত্রফল কত?', visual:'টেবিল: ৫ মি × ৩ মি\nক্ষেত্রফল = ?', type:'multiple-choice', options:['১০ বর্গ মি','১২ বর্গ মি','১৫ বর্গ মি','১৮ বর্গ মি'], answer:'১৫ বর্গ মি', hint:'ক্ষেত্রফল = ৫ × ৩ = ?', explanation:'ক্ষেত্রফল = ৫ × ৩ = ১৫ বর্গ মি! ✅' },
+        ],
+        quiz: [
+          { id:'geo_q1', question:'বর্গক্ষেত্রের বাহু ৮ সেমি। পরিধি কত?', visual:'বর্গক্ষেত্র: বাহু=৮ সেমি', options:['২৪ সেমি','৩২ সেমি','৬৪ সেমি','১৬ সেমি'], answer:'৩২ সেমি' },
+          { id:'geo_q2', question:'আয়তক্ষেত্রের দৈর্ঘ্য ১০ সেমি, প্রস্থ ৫ সেমি। ক্ষেত্রফল কত?', visual:'১০ × ৫ = ?', options:['৩০ বর্গ সেমি','৪০ বর্গ সেমি','৫০ বর্গ সেমি','৬০ বর্গ সেমি'], answer:'৫০ বর্গ সেমি' },
+          { id:'geo_q3', question:'কোন আকারের ৫টি বাহু আছে?', visual:'৫ বাহু = ?', options:['চতুর্ভুজ','পঞ্চভুজ','ষড়ভুজ','ত্রিভুজ'], answer:'পঞ্চভুজ' },
+          { id:'geo_q4', question:'ত্রিভুজের বাহু: ৬, ৮, ১০ সেমি। পরিধি কত?', visual:'ত্রিভুজ: ৬+৮+১০ = ?', options:['২০ সেমি','২২ সেমি','২৪ সেমি','২৬ সেমি'], answer:'২৪ সেমি' },
+          { id:'geo_q5', question:'বর্গক্ষেত্রের বাহু ১১ সেমি। ক্ষেত্রফল কত?', visual:'১১ × ১১ = ?', options:['১০০ বর্গ সেমি','১১১ বর্গ সেমি','১২১ বর্গ সেমি','১৩১ বর্গ সেমি'], answer:'১২১ বর্গ সেমি' },
+          { id:'geo_q6', question:'আয়তক্ষেত্রের দৈর্ঘ্য ৭ সেমি, প্রস্থ ৪ সেমি। পরিধি কত?', visual:'২×(৭+৪) = ?', options:['২২ সেমি','২৪ সেমি','২৬ সেমি','২৮ সেমি'], answer:'২২ সেমি' },
+          { id:'geo_q7', question:'বর্গক্ষেত্রের পরিধি ৩৬ সেমি। এক বাহুর দৈর্ঘ্য কত?', visual:'৪ × বাহু = ৩৬', options:['৭ সেমি','৮ সেমি','৯ সেমি','১০ সেমি'], answer:'৯ সেমি' },
+          { id:'geo_q8', question:'কোন আকারটি সব কোণে ৯০° থাকে?', visual:'কোণ = ৯০° কোন আকার?', options:['ত্রিভুজ','আয়তক্ষেত্র','বৃত্ত','পঞ্চভুজ'], answer:'আয়তক্ষেত্র' },
+          { id:'geo_q9', question:'একটি ঘরের মেঝে ৬ মি × ৬ মি। ক্ষেত্রফল কত?', visual:'৬ × ৬ = ?', options:['২৪ বর্গ মি','৩০ বর্গ মি','৩৬ বর্গ মি','৪২ বর্গ মি'], answer:'৩৬ বর্গ মি' },
+          { id:'geo_q10', question:'আয়তক্ষেত্রের ক্ষেত্রফল ৫৬ বর্গ সেমি, দৈর্ঘ্য ৮ সেমি। প্রস্থ কত?', visual:'৮ × প্রস্থ = ৫৬', options:['৫ সেমি','৬ সেমি','৭ সেমি','৮ সেমি'], answer:'৭ সেমি' },
+          { id:'geo_q11', question:'ষড়ভুজের প্রতিটি বাহু ৬ সেমি। পরিধি কত?', visual:'ষড়ভুজ: ৬ × ৬ = ?', options:['৩০ সেমি','৩৬ সেমি','৪০ সেমি','৪২ সেমি'], answer:'৩৬ সেমি' },
+          { id:'geo_q12', question:'কোনটি বৃহত্তর ক্ষেত্রফল: ৮×৫ নাকি ৬×৭?', visual:'৮×৫=? 🆚 ৬×৭=?', options:['৮×৫ (৪০)','৬×৭ (৪২)','দুটো সমান','বলা যায় না'], answer:'৬×৭ (৪২)' },
+        ],
+      },
+      {
+        id: 'algebra', title: 'বীজগণিত', subtitle: 'রহস্য সমাধান করো!',
+        icon: '🔮', color: '#9B59B6', bgGradient: 'linear-gradient(135deg, #9B59B6, #6C63FF)', grade: 6,
+        slides: [
+          { title: '🎁 চলক ও সমীকরণ — যোগ/বিয়োগ', story: 'x হলো একটি রহস্যের সংখ্যা! x + ৫ = ১২ হলে x = কত? উভয় পাশ থেকে ৫ বিয়োগ করলেই পাই!', visual: 'উদাহরণ ১: x + ৫ = ১২\n→ x = ১২ - ৫ = ৭  ✅ (যাচাই: ৭+৫=১২)\n\nউদাহরণ ২: x + ৯ = ২০\n→ x = ২০ - ৯ = ১১ ✅\n\nউদাহরণ ৩: x - ৪ = ১৩\n→ x = ১৩ + ৪ = ১৭ ✅\n\nউদাহরণ ৪: x - ৭ = ১৫\n→ x = ১৫ + ৭ = ২২ ✅\n\nউদাহরণ ৫: x + ১৫ = ৩০\n→ x = ৩০ - ১৫ = ১৫ ✅', explanation: 'নিয়ম: যোগ থাকলে বিয়োগ করো, বিয়োগ থাকলে যোগ করো! সবসময় যাচাই করো!', tip: '💡 সমীকরণ = দাঁড়িপাল্লা! একদিকে কিছু করলে অন্যদিকেও একই করো!' },
+          { title: '✖️ চলক ও সমীকরণ — গুণ/ভাগ', story: '৩x = ২৪ মানে ৩ বার x এর মান = ২৪। x বের করতে ৩ দিয়ে ভাগ করো!', visual: 'উদাহরণ ১: ৩x = ২৪\n→ x = ২৪ ÷ ৩ = ৮  ✅ (যাচাই: ৩×৮=২৪)\n\nউদাহরণ ২: ৫x = ৩৫\n→ x = ৩৫ ÷ ৫ = ৭  ✅\n\nউদাহরণ ৩: x ÷ ৪ = ৬\n→ x = ৬ × ৪ = ২৪ ✅\n\nউদাহরণ ৪: x ÷ ৭ = ৮\n→ x = ৮ × ৭ = ৫৬ ✅\n\nউদাহরণ ৫: ২x = ৩০\n→ x = ৩০ ÷ ২ = ১৫ ✅', explanation: 'নিয়ম: গুণ থাকলে ভাগ করো, ভাগ থাকলে গুণ করো!', tip: '💡 ৪x = ২০ → x = ২০÷৪ = ৫। x÷৩ = ৭ → x = ৭×৩ = ২১!' },
+          { title: '🌊 প্যাটার্ন — সংখ্যার নিয়ম খোঁজো!', story: 'প্যাটার্ন মানে নিয়ম মেনে চলা! নিয়ম খুঁজে পেলে পরের সংখ্যা বলতে পারবে!', visual: 'প্যাটার্ন ১ (+৩): ৩, ৬, ৯, ১২, ১৫, __\nউত্তর: ১৮ (প্রতিবার +৩)\n\nপ্যাটার্ন ২ (+৫): ৫, ১০, ১৫, ২০, ২৫, __\nউত্তর: ৩০ (প্রতিবার +৫)\n\nপ্যাটার্ন ৩ (×২): ২, ৪, ৮, ১৬, ৩২, __\nউত্তর: ৬৪ (প্রতিবার ×২)\n\nপ্যাটার্ন ৪ (+১০): ১০, ২০, ৩০, ৪০, __\nউত্তর: ৫০ (প্রতিবার +১০)\n\nসূত্র: ধারা ২,৪,৬,৮ = ২n\nধারা ৫,১০,১৫ = ৫n', explanation: 'নিয়ম বের করো → সব ধাপের পার্থক্য মাপো → প্যাটার্ন বাড়াও!', tip: '💡 পার্থক্য একই থাকলে = যোগের প্যাটার্ন! প্রতিবার গুণ হলে = গুণের প্যাটার্ন!' },
+        ],
+        practice: [
+          { id:'alg_p1', question:'সমাধান করো: x + ৮ = ১৫', visual:'📦 + 8️⃣ = 1️⃣5️⃣\nx = ?', type:'multiple-choice', options:['৫','৬','৭','৮'], answer:'৭', hint:'উভয় পাশ থেকে ৮ বিয়োগ করো: x = ১৫ - ৮ = ?', explanation:'x + ৮ = ১৫ → x = ১৫ - ৮ = ৭! যাচাই: ৭+৮=১৫ ✅' },
+          { id:'alg_p2', question:'সমাধান করো: ৩x = ২৪', visual:'৩ × 📦 = 2️⃣4️⃣\nx = ?', type:'multiple-choice', options:['৬','৭','৮','৯'], answer:'৮', hint:'উভয় পাশকে ৩ দিয়ে ভাগ করো: x = ২৪ ÷ ৩ = ?', explanation:'৩x = ২৪ → x = ৮! যাচাই: ৩×৮=২৪ ✅' },
+          { id:'alg_p3', question:'সমাধান করো: x - ৬ = ১১', visual:'📦 ➖ 6️⃣ = 1️⃣1️⃣\nx = ?', type:'number-input', answer:'17', hint:'উভয় পাশে ৬ যোগ করো: x = ১১ + ৬ = ?', explanation:'x - ৬ = ১১ → x = ১৭! যাচাই: ১৭-৬=১১ ✅' },
+          { id:'alg_p4', question:'সমাধান করো: x + ২৫ = ৪০', visual:'📦 + ২৫ = ৪০\nx = ?', type:'multiple-choice', options:['১৩','১৪','১৫','১৬'], answer:'১৫', hint:'x = ৪০ - ২৫ = ?', explanation:'x + ২৫ = ৪০ → x = ১৫! যাচাই: ১৫+২৫=৪০ ✅' },
+          { id:'alg_p5', question:'সমাধান করো: ৫x = ৪৫', visual:'৫ × 📦 = ৪৫\nx = ?', type:'multiple-choice', options:['৭','৮','৯','১০'], answer:'৯', hint:'x = ৪৫ ÷ ৫ = ?', explanation:'৫x = ৪৫ → x = ৯! যাচাই: ৫×৯=৪৫ ✅' },
+          { id:'alg_p6', question:'সমাধান করো: x ÷ ৪ = ৭', visual:'📦 ÷ ৪ = ৭\nx = ?', type:'multiple-choice', options:['২৪','২৭','২৮','৩২'], answer:'২৮', hint:'উভয় পাশকে ৪ দিয়ে গুণ করো: x = ৭ × ৪ = ?', explanation:'x ÷ ৪ = ৭ → x = ২৮! যাচাই: ২৮÷৪=৭ ✅' },
+          { id:'alg_p7', question:'প্যাটার্নের পরের সংখ্যা কী? ৩, ৬, ৯, ১২, __', visual:'৩ → ৬ → ৯ → ১২ → ?', type:'multiple-choice', options:['১৩','১৪','১৫','১৬'], answer:'১৫', hint:'প্রতিবার ৩ যোগ হয়: ১২+৩=?', explanation:'প্যাটার্নে +৩! ১২+৩=১৫ ✅' },
+          { id:'alg_p8', question:'সমাধান করো: x - ১২ = ২৫', visual:'📦 - ১২ = ২৫\nx = ?', type:'multiple-choice', options:['৩৫','৩৬','৩৭','৩৮'], answer:'৩৭', hint:'x = ২৫ + ১২ = ?', explanation:'x - ১২ = ২৫ → x = ৩৭! যাচাই: ৩৭-১২=২৫ ✅' },
+          { id:'alg_p9', question:'প্যাটার্নের পরের সংখ্যা: ১০, ২০, ৩০, ৪০, __', visual:'+১০ প্যাটার্ন', type:'multiple-choice', options:['৪৫','৪৮','৫০','৫৫'], answer:'৫০', hint:'প্রতিবার ১০ যোগ হয়: ৪০+১০=?', explanation:'+১০ প্যাটার্ন! ৪০+১০=৫০ ✅' },
+          { id:'alg_p10', question:'সমাধান করো: ৭x = ৫৬', visual:'৭ × 📦 = ৫৬\nx = ?', type:'multiple-choice', options:['৬','৭','৮','৯'], answer:'৮', hint:'x = ৫৬ ÷ ৭ = ?', explanation:'৭x = ৫৬ → x = ৮! যাচাই: ৭×৮=৫৬ ✅' },
+          { id:'alg_p11', question:'সমাধান করো: x + ৩৫ = ৬০', visual:'📦 + ৩৫ = ৬০\nx = ?', type:'number-input', answer:'25', hint:'x = ৬০ - ৩৫ = ?', explanation:'x = ৬০ - ৩৫ = ২৫! যাচাই: ২৫+৩৫=৬০ ✅' },
+          { id:'alg_p12', question:'প্যাটার্নের পরের সংখ্যা: ২, ৪, ৮, ১৬, __', visual:'×২ প্যাটার্ন', type:'multiple-choice', options:['২০','২৪','৩০','৩২'], answer:'৩২', hint:'প্রতিবার ২ গুণ হয়: ১৬×২=?', explanation:'×২ প্যাটার্ন! ১৬×২=৩২ ✅' },
+          { id:'alg_p13', question:'সমাধান করো: x ÷ ৬ = ৯', visual:'📦 ÷ ৬ = ৯\nx = ?', type:'multiple-choice', options:['৪৮','৫৪','৬০','৬৩'], answer:'৫৪', hint:'x = ৯ × ৬ = ?', explanation:'x ÷ ৬ = ৯ → x = ৫৪! যাচাই: ৫৪÷৬=৯ ✅' },
+          { id:'alg_p14', question:'প্যাটার্নে খালি জায়গায় কী? ৫, ১০, __, ২০, ২৫', visual:'৫, ১০, __, ২০, ২৫', type:'multiple-choice', options:['১২','১৩','১৪','১৫'], answer:'১৫', hint:'+৫ প্যাটার্ন: ১০+৫=?', explanation:'১০+৫=১৫! প্যাটার্ন: ৫,১০,১৫,২০,২৫ ✅' },
+          { id:'alg_p15', question:'যদি ২x + ৩ = ১৩ হয়, তাহলে x কত?', visual:'২×📦 + ৩ = ১৩\n→ ২x = ১৩-৩ = ১০\n→ x = ?', type:'multiple-choice', options:['৩','৪','৫','৬'], answer:'৫', hint:'প্রথমে ৩ বিয়োগ: ২x=১০। তারপর ২ দিয়ে ভাগ: x=?', explanation:'২x+৩=১৩ → ২x=১০ → x=৫! যাচাই: ২×৫+৩=১৩ ✅' },
+          { id:'alg_p16', question:'সমাধান করো: x + ৪৫ = ১০০', visual:'📦 + ৪৫ = ১০০\nx = ?', type:'number-input', answer:'55', hint:'x = ১০০ - ৪৫ = ?', explanation:'x = ১০০ - ৪৫ = ৫৫! যাচাই: ৫৫+৪৫=১০০ ✅' },
+          { id:'alg_p17', question:'সমাধান করো: ৯x = ৮১', visual:'৯ × 📦 = ৮১\nx = ?', type:'multiple-choice', options:['৭','৮','৯','১০'], answer:'৯', hint:'x = ৮১ ÷ ৯ = ?', explanation:'৯x = ৮১ → x = ৯! যাচাই: ৯×৯=৮১ ✅' },
+          { id:'alg_p18', question:'প্যাটার্নের পরের সংখ্যা: ১, ৪, ৯, ১৬, __', visual:'১², ২², ৩², ৪², ৫²=?', type:'multiple-choice', options:['২০','২৩','২৫','২৮'], answer:'২৫', hint:'এগুলো বর্গ সংখ্যা: ১,৪,৯,১৬,২৫... পরেরটা ৫²=?', explanation:'৫²=২৫! এগুলো পরিপূর্ণ বর্গ: ১,৪,৯,১৬,২৫ ✅' },
+          { id:'alg_p19', question:'সমাধান করো: x - ২৮ = ৪২', visual:'📦 - ২৮ = ৪২\nx = ?', type:'multiple-choice', options:['৬৮','৭০','৭২','৭৪'], answer:'৭০', hint:'x = ৪২ + ২৮ = ?', explanation:'x - ২৮ = ৪২ → x = ৭০! যাচাই: ৭০-২৮=৪২ ✅' },
+          { id:'alg_p20', question:'প্যাটার্নে কোন সংখ্যাটি বাদ গেছে? ৮, ১৬, __, ৩২, ৪০', visual:'৮, ১৬, __, ৩২, ৪০', type:'multiple-choice', options:['২০','২২','২৪','২৮'], answer:'২৪', hint:'+৮ প্যাটার্ন: ১৬+৮=?', explanation:'+৮ প্যাটার্ন! ১৬+৮=২৪ ✅' },
+        ],
+        quiz: [
+          { id:'alg_q1', question:'সমাধান করো: x + ১২ = ২০', visual:'x + ১২ = ২০', options:['৬','৭','৮','৯'], answer:'৮' },
+          { id:'alg_q2', question:'সমাধান করো: ৫x = ৪৫', visual:'৫ × x = ৪৫', options:['৭','৮','৯','১০'], answer:'৯' },
+          { id:'alg_q3', question:'পরেরটা কী? ১০, ২০, ৩০, ৪০, __', visual:'+১০ প্যাটার্ন', options:['৪৫','৪৮','৫০','৫৫'], answer:'৫০' },
+          { id:'alg_q4', question:'সমাধান করো: x ÷ ৪ = ৭', visual:'x / ৪ = ৭', options:['২৪','২৭','২৮','৩২'], answer:'২৮' },
+          { id:'alg_q5', question:'যদি ২x + ৩ = ১৩ হয়, তাহলে x কত?', visual:'২x + ৩ = ১৩', options:['৪','৫','৬','৭'], answer:'৫' },
+          { id:'alg_q6', question:'সমাধান করো: x - ১৮ = ৩২', visual:'x - ১৮ = ৩২', options:['৪৮','৫০','৫৩','৫৬'], answer:'৫০' },
+          { id:'alg_q7', question:'প্যাটার্নের পরের সংখ্যা: ২, ৪, ৮, ১৬, __', visual:'×২ প্যাটার্ন', options:['২০','২৪','৩২','৩৬'], answer:'৩২' },
+          { id:'alg_q8', question:'সমাধান করো: ৬x = ৭২', visual:'৬x = ৭২', options:['১০','১১','১২','১৩'], answer:'১২' },
+          { id:'alg_q9', question:'প্যাটার্নে খালি জায়গায় কী? ৩, ৬, __, ১২, ১৫', visual:'৩, ৬, __, ১২, ১৫', options:['৭','৮','৯','১০'], answer:'৯' },
+          { id:'alg_q10', question:'সমাধান করো: x + ৬৫ = ১০০', visual:'x + ৬৫ = ১০০', options:['৩২','৩৫','৩৭','৪০'], answer:'৩৫' },
+          { id:'alg_q11', question:'সমাধান করো: x ÷ ৮ = ৯', visual:'x ÷ ৮ = ৯', options:['৬৩','৬৪','৭২','৮১'], answer:'৭২' },
+          { id:'alg_q12', question:'যদি ৩x - ৫ = ১৯ হয়, তাহলে x কত?', visual:'৩x - ৫ = ১৯\n→ ৩x = ২৪\n→ x = ?', options:['৬','৭','৮','৯'], answer:'৮' },
+        ],
+      },
+    ];
+
+    const getTopicById = (id) => TOPICS.find(t => t.id === id);
+
+    // ============================================================
+    // HELPERS
+    // ============================================================
+    const STORAGE_KEY = 'mathTeacherProgress';
+    const saveProgress = (data) => { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch {} };
+    const loadProgress = () => { try { const r = localStorage.getItem(STORAGE_KEY); return r ? JSON.parse(r) : null; } catch { return null; } };
+
+    const CORRECT_MSGS = ['🎉 অসাধারণ! সঠিক উত্তর!', '⭐ তুমি গণিতের তারকা!', '🏆 দারুণ! চালিয়ে যাও!', '🌟 অবিশ্বাস্য কাজ!', '🎊 সঠিক! তুমি অবিশ্বাস্য!', '🦉 মিয়া তোমাকে নিয়ে গর্বিত!', '🔥 অসাধারণ! পারফেক্ট!', '💫 অনবদ্য! শাবাশ!'];
+    const WRONG_MSGS = ['🤔 কাছাকাছি! আবার চেষ্টা করো!', '💪 হার মানো না! তুমি পারবে!', '🦉 মিয়া বলে: প্রতিটি ভুল থেকে শেখা যায়!', '✨ ভালো চেষ্টা! আরেকবার ভাবো...', '🌈 চিন্তা নেই! হিন্ট দেখো!', '💡 খুব কাছাকাছি! নিচের হিন্ট দেখো!'];
+    const getCorrectMessage = () => CORRECT_MSGS[Math.floor(Math.random() * CORRECT_MSGS.length)];
+    const getWrongMessage = () => WRONG_MSGS[Math.floor(Math.random() * WRONG_MSGS.length)];
+    const calculateStars = (score) => score >= 80 ? 3 : score >= 50 ? 2 : 1;
+
+    const playSound = (type) => {
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain); gain.connect(ctx.destination);
+        if (type === 'correct') {
+          osc.frequency.setValueAtTime(523, ctx.currentTime);
+          osc.frequency.setValueAtTime(659, ctx.currentTime + 0.1);
+          osc.frequency.setValueAtTime(784, ctx.currentTime + 0.2);
+          gain.gain.setValueAtTime(0.3, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
+          osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.5);
+        } else if (type === 'wrong') {
+          osc.frequency.setValueAtTime(220, ctx.currentTime);
+          osc.frequency.setValueAtTime(180, ctx.currentTime + 0.15);
+          gain.gain.setValueAtTime(0.3, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+          osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.4);
+        } else if (type === 'complete') {
+          [523, 659, 784, 1047].forEach((f, i) => {
+            const o2 = ctx.createOscillator(); const g2 = ctx.createGain();
+            o2.connect(g2); g2.connect(ctx.destination);
+            o2.frequency.setValueAtTime(f, ctx.currentTime + i * 0.15);
+            g2.gain.setValueAtTime(0.3, ctx.currentTime + i * 0.15);
+            g2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.15 + 0.4);
+            o2.start(ctx.currentTime + i * 0.15); o2.stop(ctx.currentTime + i * 0.15 + 0.4);
+          });
+        }
+      } catch {}
+    };
+
+    // ============================================================
+    // CONFETTI
+    // ============================================================
+    const CONFETTI_COLORS = ['#FFD93D','#FF6B6B','#6BCB77','#6C63FF','#FF8E53','#4EA8DE','#a29bfe','#fd79a8'];
+    function Confetti({ count = 60 }) {
+      const pieces = Array.from({ length: count }, (_, i) => ({
+        id: i, color: CONFETTI_COLORS[i % CONFETTI_COLORS.length],
+        left: Math.random() * 100, delay: Math.random() * 2,
+        duration: 2 + Math.random() * 3, size: 8 + Math.random() * 10, rotate: Math.random() * 360,
+      }));
+      return (
+        <div className="confetti-container" aria-hidden="true">
+          {pieces.map(p => (
+            <div key={p.id} className="confetti-piece" style={{ left:`${p.left}%`, backgroundColor:p.color, width:p.size, height:p.size, animationDelay:`${p.delay}s`, animationDuration:`${p.duration}s`, transform:`rotate(${p.rotate}deg)` }} />
+          ))}
+        </div>
+      );
+    }
+
+    // ============================================================
+    // WELCOME SCREEN
+    // ============================================================
+    const GRADE_OPTIONS = [
+      { value:1, label:'১ম শ্রেণি', emoji:'🌱', desc:'শুরু করছি!' },
+      { value:2, label:'২ম শ্রেণি', emoji:'🌿', desc:'আরও ভালো হচ্ছি!' },
+      { value:3, label:'৩ম শ্রেণি', emoji:'🌳', desc:'মজবুত হচ্ছি!' },
+      { value:4, label:'৪ম শ্রেণি', emoji:'⭐', desc:'লেভেল আপ!' },
+      { value:5, label:'৫ম শ্রেণি', emoji:'🌟', desc:'প্রায় প্রো!' },
+      { value:6, label:'৬ম শ্রেণি+', emoji:'🏆', desc:'গণিত চ্যাম্পিয়ন!' },
+    ];
+    function WelcomeScreen({ onStart }) {
+      const [name, setName] = useState('');
+      const [grade, setGrade] = useState(null);
+      const [step, setStep] = useState(1);
+      const [nameError, setNameError] = useState('');
+      const handleNameNext = () => {
+        if (!name.trim()) { setNameError('দয়া করে তোমার নাম লেখো! 😊'); return; }
+        setNameError(''); setStep(2);
+      };
+      return (
+        <div className="welcome-screen">
+          <div className="bg-shapes">
+            {['🌟','⭐','✨','💫','🎈','🎉','🌈','🦋','🌸'].map((e,i) => <span key={i} className={`bg-shape bg-shape-${i}`}>{e}</span>)}
+          </div>
+          <div className="welcome-content">
+            <div className="welcome-header">
+              <div className="mascot">🦉</div>
+              <h1 className="welcome-title">মরিয়ম<br/><span className="title-highlight">গণিত শিক্ষক</span></h1>
+              <p className="welcome-tagline">✨ গণিত শেখো। গণিত ভালোবাসো। গণিতে বাঁচো! ✨</p>
+            </div>
+            <div className="welcome-card">
+              {step === 1 && (
+                <div className="step-content">
+                  <h2 className="step-title">🦉 হেলো সুপারস্টার!</h2>
+                  <p className="step-desc">তোমার নাম কী? আমি মিয়া, তোমার গণিতের পেঁচআ পাখি! 🌟</p>
+                  <input className="name-input" placeholder="এখানে তোমার নাম লেখো... 😊" value={name} onChange={e => setName(e.target.value)} onKeyDown={e => e.key === 'Enter' && handleNameNext()} maxLength={30} autoFocus />
+                  {nameError && <p className="input-error">{nameError}</p>}
+                  <button className="btn-primary welcome-btn" onClick={handleNameNext}>পরের ধাপ ➡️</button>
+                </div>
+              )}
+              {step === 2 && (
+                <div className="step-content">
+                  <h2 className="step-title">🎒 হেলো, {name}! তুমি কোন শ্রেণিতে?</h2>
+                  <p className="step-desc">তোমার শ্রেণি বেছে নাও যাতে আমি সঠিক বিষয় বোঝাতে পারি!</p>
+                  <div className="grade-grid">
+                    {GRADE_OPTIONS.map(g => (
+                      <button key={g.value} className={`grade-btn ${grade === g.value ? 'grade-btn-selected' : ''}`} onClick={() => setGrade(g.value)}>
+                        <span className="grade-emoji">{g.emoji}</span>
+                        <span className="grade-label">{g.label}</span>
+                        <span className="grade-desc">{g.desc}</span>
+                      </button>
+                    ))}
+                  </div>
+                  <div className="step-actions">
+                    <button className="btn-secondary" onClick={() => setStep(1)}>← পিছনে</button>
+                    <button className="btn-primary welcome-btn" onClick={() => grade && onStart(name.trim(), grade)} disabled={!grade} style={{ opacity: grade ? 1 : 0.5 }}>শুরু করি! 🚀</button>
+                  </div>
+                </div>
+              )}
+            </div>
+            <div className="features-row">
+              {[{emoji:'🎮',text:'মজার খেলা'},{emoji:'🏆',text:'তারকা জেতো'},{emoji:'📚',text:'৬টি বিষয়'},{emoji:'💡',text:'বুদ্ধিমান হিন্ট'}].map(f => (
+                <div key={f.text} className="feature-badge"><span>{f.emoji}</span><span>{f.text}</span></div>
+              ))}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // ============================================================
+    // DASHBOARD
+    // ============================================================
+    function Dashboard({ childName, grade, topicStars, totalStars, onSelectTopic, onReset }) {
+      const totalPossibleStars = TOPICS.length * 3;
+      return (
+        <div className="dashboard">
+          <div className="dash-topbar">
+            <div className="dash-greeting">
+              <span className="mascot-small">🦉</span>
+              <div><div className="dash-hello">Hello, {childName}! 👋</div><div className="dash-subtitle">Ready to learn math today?</div></div>
+            </div>
+            <div className="dash-stars-total">
+              <span className="stars-icon">⭐</span>
+              <span className="stars-count">{totalStars} / {totalPossibleStars}</span>
+              <button className="reset-btn" onClick={onReset} title="ব্যবহারকারী পরিবর্তন">🔄</button>
+            </div>
+          </div>
+          <div className="dash-progress-strip">
+            <div className="progress-label">সামগ্রিক অগ্রগতি</div>
+            <div className="progress-bar-container"><div className="progress-bar-fill" style={{ width:`${(totalStars/totalPossibleStars)*100}%` }} /></div>
+            <div className="progress-percent">{Math.round((totalStars/totalPossibleStars)*100)}%</div>
+          </div>
+          <div className="dash-content">
+            <h2 className="dash-section-title">📚 তোমার পাঠ বেলে নাও</h2>
+            <div className="topics-grid">
+              {TOPICS.map((topic, index) => {
+                const stars = topicStars[topic.id] || 0;
+                return (
+                  <button key={topic.id} className={`topic-card ${stars > 0 ? 'topic-completed' : ''}`} onClick={() => onSelectTopic(topic.id)}>
+                    <div className="topic-number">#{index+1}</div>
+                    <div className="topic-icon">{topic.icon}</div>
+                    <div className="topic-info">
+                      <div className="topic-title">{topic.title}</div>
+                      <div className="topic-subtitle">{topic.subtitle}</div>
+                      <div className="topic-grade">শ্রেণি {topic.grade}+</div>
+                    </div>
+                    <div className="topic-stars">
+                      {[1,2,3].map(s => <span key={s} className={s <= stars ? 'earned' : 'empty'}>{s <= stars ? '⭐' : '☆'}</span>)}
+                    </div>
+                    {stars > 0 && <div className="topic-badge">✅</div>}
+                    <div className="topic-arrow">➡️</div>
+                  </button>
+                );
+              })}
+            </div>
+            <div className="fun-fact-banner">
+              <span className="mascot-small">🦉</span>
+              <p><strong>মিয়া বলছে:</strong> "গণিত হলো একটি সুপারপাওয়ার! যত বেশি অভ্যাস করবে, তত শক্তিশালী হবে! 💪"</p>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // ============================================================
+    // LESSON VIEW
+    // ============================================================
+    function LessonView({ topicId, currentSlide, setCurrentSlide, onComplete, onBack, childName }) {
+      const topic = getTopicById(topicId);
+      if (!topic) return null;
+      const slides = topic.slides;
+      const slide = slides[currentSlide];
+      const progress = ((currentSlide + 1) / slides.length) * 100;
+      const handleNext = () => currentSlide < slides.length - 1 ? setCurrentSlide(currentSlide + 1) : onComplete();
+      const handlePrev = () => currentSlide > 0 ? setCurrentSlide(currentSlide - 1) : onBack();
+      return (
+        <div className="lesson-view" style={{ '--topic-gradient': topic.bgGradient }}>
+          <div className="lesson-topbar">
+            <button className="btn-secondary back-btn" onClick={handlePrev}>← পিছনে</button>
+            <div className="lesson-topic-label"><span>{topic.icon}</span><span>{topic.title}</span></div>
+            <div className="lesson-slide-count">{currentSlide+1} / {slides.length}</div>
+          </div>
+          <div className="lesson-progress-bar"><div className="lesson-progress-fill" style={{ width:`${progress}%` }} /></div>
+          <div className="lesson-content">
+            <div className="lesson-card" key={currentSlide}>
+              <div className="lesson-slide-header" style={{ background: topic.bgGradient }}>
+                <div className="lesson-mascot-row">
+                  <span className="mascot-small">🦉</span>
+                  <div className="lesson-speech-bubble"><p>হেলো {childName}! আজ আমরা অসাধারণ কিছু শিখবো! 🌟</p></div>
+                </div>
+                <h2 className="lesson-slide-title">{slide.title}</h2>
+              </div>
+              <div className="lesson-section">
+                <div className="lesson-section-label">📖 গল্পের সময়</div>
+                <div className="lesson-story-box">{slide.story}</div>
+              </div>
+              {slide.visual && (
+                <div className="lesson-section">
+                  <div className="lesson-section-label">👀 একটু দেখি!</div>
+                  <div className="lesson-visual-box"><pre className="lesson-visual-text">{slide.visual}</pre></div>
+                </div>
+              )}
+              <div className="lesson-section">
+                <div className="lesson-section-label">💡 এটা মনে রাখো!</div>
+                <div className="lesson-explanation-box">{slide.explanation}</div>
+              </div>
+              {slide.tip && <div className="lesson-tip-box">{slide.tip}</div>}
+            </div>
+            <div className="lesson-nav">
+              <div className="slide-dots">
+                {slides.map((_,i) => <button key={i} className={`slide-dot ${i === currentSlide ? 'slide-dot-active' : ''}`} onClick={() => setCurrentSlide(i)} />)}
+              </div>
+              <button className="btn-primary lesson-next-btn" onClick={handleNext}>
+                {currentSlide < slides.length - 1 ? 'পরের স্লাইড ➡️' : 'অনুশীলন শুরু! 🎯'}
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // ============================================================
+    // PRACTICE PROBLEMS
+    // ============================================================
+    function PracticeProblems({ topicId, onComplete, onBack, childName }) {
+      const topic = getTopicById(topicId);
+      const problems = topic?.practice || [];
+      const [currentIdx, setCurrentIdx] = useState(0);
+      const [inputValue, setInputValue] = useState('');
+      const [selectedOption, setSelectedOption] = useState(null);
+      const [feedback, setFeedback] = useState(null);
+      const [feedbackMsg, setFeedbackMsg] = useState('');
+      const [showHint, setShowHint] = useState(false);
+      const [showExplanation, setShowExplanation] = useState(false);
+      const [correctCount, setCorrectCount] = useState(0);
+      const [animKey, setAnimKey] = useState(0);
+      const problem = problems[currentIdx];
+      const progress = (currentIdx / problems.length) * 100;
+
+      const checkAnswer = () => {
+        if (!problem) return;
+        const userAnswer = problem.type === 'multiple-choice' ? selectedOption : inputValue.trim();
+        if (!userAnswer) return;
+        const isCorrect = userAnswer.toLowerCase() === problem.answer.toLowerCase();
+        if (isCorrect) {
+          setFeedback('correct'); setFeedbackMsg(getCorrectMessage());
+          setCorrectCount(c => c + 1); playSound('correct'); setShowExplanation(true);
+        } else {
+          setFeedback('wrong'); setFeedbackMsg(getWrongMessage()); playSound('wrong');
+        }
+      };
+
+      const handleNext = () => {
+        if (currentIdx < problems.length - 1) {
+          setCurrentIdx(i => i+1); setInputValue(''); setSelectedOption(null);
+          setFeedback(null); setFeedbackMsg(''); setShowHint(false);
+          setShowExplanation(false); setAnimKey(k => k+1);
+        } else { onComplete(); }
+      };
+
+      if (!problem) return null;
+      return (
+        <div className="practice-view">
+          {feedback && <div className={`feedback-toast ${feedback}`}>{feedbackMsg}</div>}
+          <div className="practice-topbar">
+            <button className="btn-secondary back-btn" onClick={onBack}>← পাঠ</button>
+            <div className="practice-topic-label"><span>{topic.icon}</span><span>অনুশীলনের সময়! 🎯</span></div>
+            <div className="practice-score">✅ {correctCount} / {problems.length}</div>
+          </div>
+          <div className="lesson-progress-bar"><div className="lesson-progress-fill" style={{ width:`${progress}%` }} /></div>
+          <div className="practice-content">
+            <div className="practice-mascot-row">
+              <span className="mascot-small">🦉</span>
+              <div className="practice-speech">
+                {feedback === 'correct' ? `চমৎকার ${childName}! সঠিক হয়েছে! 🎉` : feedback === 'wrong' ? `হার মানো না ${childName}! 💪` : `ধাপ ${currentIdx+1} / ${problems.length} — চলো যাও ${childName}! 🚀`}
+              </div>
+            </div>
+            <div className="problem-card" key={animKey}>
+              <div className="problem-number">সমস্যা {currentIdx+1} / {problems.length}</div>
+              <h3 className="problem-question">{problem.question}</h3>
+              {problem.visual && <div className="problem-visual"><pre className="problem-visual-text">{problem.visual}</pre></div>}
+              {problem.type === 'multiple-choice' && !showExplanation && (
+                <div className="options-grid">
+                  {problem.options.map(opt => (
+                    <button key={opt} className={`option-btn ${selectedOption === opt ? 'option-selected' : ''} ${feedback === 'correct' && opt === problem.answer ? 'option-correct' : ''} ${feedback === 'wrong' && selectedOption === opt ? 'option-wrong' : ''}`}
+                      onClick={() => { if (!feedback) setSelectedOption(opt); }}>{opt}</button>
+                  ))}
+                </div>
+              )}
+              {problem.type === 'number-input' && !showExplanation && (
+                <div className="input-answer-area">
+          <input type="number" className="answer-input" placeholder="তোমার উত্তর লেখো..." value={inputValue} onChange={e => setInputValue(e.target.value)} onKeyDown={e => e.key === 'Enter' && !feedback && checkAnswer()} disabled={!!feedback} autoFocus />
+                </div>
+              )}
+              {!feedback && <button className="hint-btn" onClick={() => setShowHint(h => !h)}>{showHint ? '🔒 হিন্ট লুকাও' : '💡 সাহায্য দরকার?'}</button>}
+              {showHint && !feedback && <div className="hint-box"><strong>🦉 মিয়ার হিন্ট:</strong> {problem.hint}</div>}
+              {showExplanation && <div className="explanation-box"><strong>✅ ব্যাখ্যা:</strong> {problem.explanation}</div>}
+              <div className="problem-actions">
+                {!feedback
+                  ? <button className="btn-primary check-btn" onClick={checkAnswer} disabled={problem.type === 'multiple-choice' ? !selectedOption : !inputValue.trim()} style={{ opacity: (problem.type === 'multiple-choice' ? selectedOption : inputValue.trim()) ? 1 : 0.5 }}>উত্তর যাচাই ✅</button>
+                  : <button className="btn-success next-problem-btn" onClick={handleNext}>{currentIdx < problems.length-1 ? 'পরের সমস্যা ➡️' : 'ক্঵িজ দাও! 🏆'}</button>
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // ============================================================
+    // QUIZ SCREEN
+    // ============================================================
+    function QuizScreen({ topicId, onComplete, onBack, childName }) {
+      const topic = getTopicById(topicId);
+      const questions = topic?.quiz || [];
+      const [currentIdx, setCurrentIdx] = useState(0);
+      const [selected, setSelected] = useState(null);
+      const [answered, setAnswered] = useState(false);
+      const [correctAnswers, setCorrectAnswers] = useState(0);
+      const [answers, setAnswers] = useState([]);
+      const [animKey, setAnimKey] = useState(0);
+      const question = questions[currentIdx];
+      const progress = (currentIdx / questions.length) * 100;
+      const isLastQuestion = currentIdx === questions.length - 1;
+
+      const handleSubmit = () => {
+        if (!selected || answered) return;
+        const isCorrect = selected.toLowerCase() === question.answer.toLowerCase();
+        setAnswered(true);
+        const updatedAnswers = [...answers, { question: question.question, selected, correct: question.answer, isCorrect }];
+        setAnswers(updatedAnswers);
+        if (isCorrect) { setCorrectAnswers(c => c+1); playSound('correct'); }
+        else { playSound('wrong'); }
+      };
+
+      const handleNext = () => {
+        if (isLastQuestion) {
+          const lastIsCorrect = selected && selected.toLowerCase() === question.answer.toLowerCase();
+          const totalCorrect = correctAnswers + (lastIsCorrect && !answered ? 1 : 0);
+          const score = Math.round((correctAnswers / questions.length) * 100);
+          playSound('complete'); onComplete(score, answers);
+        } else {
+          setCurrentIdx(i => i+1); setSelected(null); setAnswered(false); setAnimKey(k => k+1);
+        }
+      };
+
+      if (!question) return null;
+      return (
+        <div className="quiz-view">
+          <div className="quiz-topbar">
+            <button className="btn-secondary back-btn" onClick={onBack}>← অনুশীলন</button>
+            <div className="quiz-label"><span>🏆</span><span>ক্঵িজের সময়!</span></div>
+            <div className="quiz-score-badge">✅ {correctAnswers} / {questions.length}</div>
+          </div>
+          <div className="quiz-progress-bar"><div className="quiz-progress-fill" style={{ width:`${progress}%` }} /></div>
+          <div className="quiz-content">
+            <div className="quiz-header">
+              <div className="quiz-q-counter">প্রশ্ন {currentIdx+1} / {questions.length}</div>
+              <div className="quiz-encouragement">
+                {answered ? (selected === question.answer ? '🎉 সঠিক! শাবাশ!' : '💪 চালিয়ে যাও!') : `তুমি পারবে, ${childName}! 🌟`}
+              </div>
+            </div>
+            <div className="quiz-card" key={animKey}>
+              <div className="quiz-mascot-row"><span className="mascot-small">🦉</span><div className="quiz-q-number">Q{currentIdx+1}</div></div>
+              <h3 className="quiz-question">{question.question}</h3>
+              {question.visual && <div className="quiz-visual"><pre className="quiz-visual-text">{question.visual}</pre></div>}
+              <div className="quiz-options-grid">
+                {question.options.map((opt, i) => {
+                  let cls = 'quiz-option';
+                  if (answered) {
+                    if (opt === question.answer) cls += ' quiz-option-correct';
+                    else if (opt === selected) cls += ' quiz-option-wrong';
+                    else cls += ' quiz-option-disabled';
+                  } else if (selected === opt) cls += ' quiz-option-selected';
+                  return (
+                    <button key={opt} className={cls} onClick={() => !answered && setSelected(opt)}>
+                      <span className="quiz-option-letter">{String.fromCharCode(65+i)}</span>
+                      <span className="quiz-option-text">{opt}</span>
+                      {answered && opt === question.answer && <span className="quiz-option-check">✅</span>}
+                      {answered && opt === selected && opt !== question.answer && <span className="quiz-option-x">❌</span>}
+                    </button>
+                  );
+                })}
+              </div>
+              {answered && (
+                <div className={`quiz-answer-feedback ${selected === question.answer ? 'correct-fb' : 'wrong-fb'}`}>
+                  {selected === question.answer ? `🌟 সঠিক! উত্তর হলো "${question.answer}"!` : `সঠিক উত্তর হলো "${question.answer}"। চিন্তা করো না, আবার বুঝে নাও! 💪`}
+                </div>
+              )}
+              <div className="quiz-actions">
+                {!answered
+                  ? <button className="btn-primary quiz-submit-btn" onClick={handleSubmit} disabled={!selected} style={{ opacity: selected ? 1 : 0.5 }}>উত্তর জমা দাও ✅</button>
+                  : <button className="btn-success quiz-next-btn" onClick={handleNext}>{isLastQuestion ? 'আমার ফলাফল দেখো! 🏆' : 'পরের প্রশ্ন ➡️'}</button>
+                }
+              </div>
+            </div>
+            <div className="quiz-dots">
+              {questions.map((_,i) => (
+                <div key={i} className={`quiz-dot ${i < currentIdx ? 'quiz-dot-done' : i === currentIdx ? 'quiz-dot-current' : 'quiz-dot-pending'}`} />
+              ))}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // ============================================================
+    // RESULTS SCREEN
+    // ============================================================
+    const RESULT_MESSAGES = {
+      3: ['🏆 সর্বোচ্চ স্কোর! তুমি গণিত চ্যাম্পিয়ন!', '🌟 অসাধারণ! তুমি সব প্রশ্নের সঠিক উত্তর দিয়েছ!', '🎊 অবিশ্বাস্য! তুমি সত্যিকারের গণিত প্রতিভা!'],
+      2: ['🌟 দারুণ কাজ! তুমি কাছাকাছিই আছো!', '💪 বাহ! ৩ তারকা পেতে অনুশীলন জারি রাখো!', '🎉 ভালো কাজ! প্রতিদিন আরও ভালো হচ্ছো!'],
+      1: ['💪 ভালো চেষ্টা! পাঠ আবার দেখো এবং আবার চেষ্টা করো!', '🤗 হার মানো না! সব চ্যাম্পিয়নরাই তোমার মতো শুরু করেছিল!', '🌱 দারুণ শুরু! অনুশীলনের সাথে সকল সম্ভব!'],
+    };
+    function ResultsScreen({ topicId, score, topicStars, totalStars, childName, onBackToDashboard, onRetry }) {
+      const topic = getTopicById(topicId);
+      const stars = calculateStars(score);
+      const [starsVisible, setStarsVisible] = useState(0);
+      const messages = RESULT_MESSAGES[stars];
+      const message = messages[Math.floor(Math.random() * messages.length)];
+      useEffect(() => {
+        const t1 = setTimeout(() => setStarsVisible(1), 400);
+        const t2 = setTimeout(() => setStarsVisible(2), 700);
+        const t3 = setTimeout(() => setStarsVisible(3), 1000);
+        return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
+      }, []);
+      return (
+        <div className="results-view">
+          {stars === 3 && <Confetti count={80} />}
+          {stars === 2 && <Confetti count={40} />}
+          <div className="results-content">
+            <div className="results-header-card">
+              <div className="results-mascot">🦉</div>
+              <h2 className="results-title">{stars === 3 ? 'ওহোহো!' : stars === 2 ? 'শাবাস!' : 'চেষ্টা ভালো ছিল!'}</h2>
+              <p className="results-message">{message}</p>
+            </div>
+            <div className="results-stars-card">
+              <div className="results-topic-label"><span>{topic?.icon}</span><span>{topic?.title}</span></div>
+              <div className="results-stars-row">
+                {[1,2,3].map(s => <span key={s} className={`results-star ${s <= starsVisible ? 'results-star-visible' : 'results-star-hidden'}`}>⭐</span>)}
+              </div>
+              <div className="results-score-display">
+                <div className="results-score-number">{score}%</div>
+                <div className="results-score-label">স্কোর</div>
+              </div>
+              <div className="results-score-breakdown">
+                {score >= 80 && '✅ অসাধারণ — ৩টি তারকা পেয়েছ!'}
+                {score >= 50 && score < 80 && '✅ ভালো — ২টি তারকা পেয়েছ!'}
+                {score < 50 && '⭐ ১টি তারকা — অনুশীলন জারি রাখো!'}
+              </div>
+            </div>
+            <div className="results-total-card">
+              <div className="results-total-label">তোমার মোট তারকা</div>
+              <div className="results-total-stars">⭐ {totalStars} Stars</div>
+              <div className="results-total-bar"><div className="results-total-fill" style={{ width:`${(totalStars/(TOPICS.length*3))*100}%` }} /></div>
+            </div>
+            <div className="results-actions">
+              <button className="results-retry-btn" onClick={onRetry}>🔄 আবার চেষ্টা</button>
+              <button className="results-dashboard-btn" onClick={onBackToDashboard}>🏠 ড্যাশবোর্ড</button>
+            </div>
+            <div className="results-mia-message">
+              <span className="mascot-small">🦉</span>
+              <p>{stars >= 2 ? `"${childName}, তুমি আমাকে গর্বিত করছো! এভাবে চালিয়ে যাও! 🌟"` : `"${childName}, প্রতিটি বড় গণিতবিদরাই ঠিক তোমার মতো শুরু করেছিল! চালিয়ে যাও! 💪"`}</p>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // ============================================================
+    // APP
+    // ============================================================
+    function App() {
+      const [screen, setScreen] = useState('welcome');
+      const [childName, setChildName] = useState('');
+      const [grade, setGrade] = useState(1);
+      const [currentTopicId, setCurrentTopicId] = useState(null);
+      const [currentSlide, setCurrentSlide] = useState(0);
+      const [score, setScore] = useState(0);
+      const [totalStars, setTotalStars] = useState(0);
+      const [topicStars, setTopicStars] = useState({});
+      const [quizAnswers, setQuizAnswers] = useState([]);
+
+      useEffect(() => {
+        const progress = loadProgress();
+        if (progress) {
+          setChildName(progress.childName || '');
+          setGrade(progress.grade || 1);
+          setTopicStars(progress.topicStars || {});
+          setTotalStars(progress.totalStars || 0);
+          if (progress.childName) setScreen('dashboard');
+        }
+      }, []);
+
+      const handleStart = (name, selectedGrade) => {
+        setChildName(name); setGrade(selectedGrade); setScreen('dashboard');
+        saveProgress({ childName: name, grade: selectedGrade, topicStars, totalStars });
+      };
+      const handleSelectTopic = (topicId) => { setCurrentTopicId(topicId); setCurrentSlide(0); setScreen('lesson'); };
+      const handleLessonComplete = () => { setScreen('practice'); setCurrentSlide(0); };
+      const handlePracticeComplete = () => { setScore(0); setQuizAnswers([]); setScreen('quiz'); };
+      const handleQuizComplete = (finalScore, answers) => {
+        setScore(finalScore); setQuizAnswers(answers);
+        const stars = finalScore >= 80 ? 3 : finalScore >= 50 ? 2 : 1;
+        const newTopicStars = { ...topicStars, [currentTopicId]: Math.max(topicStars[currentTopicId] || 0, stars) };
+        const newTotal = Object.values(newTopicStars).reduce((a,b) => a+b, 0);
+        setTopicStars(newTopicStars); setTotalStars(newTotal);
+        saveProgress({ childName, grade, topicStars: newTopicStars, totalStars: newTotal });
+        setScreen('results');
+      };
+      const handleBackToDashboard = () => { setCurrentTopicId(null); setCurrentSlide(0); setScore(0); setScreen('dashboard'); };
+      const handleRetryTopic = () => { setCurrentSlide(0); setScore(0); setScreen('lesson'); };
+      const handleResetProgress = () => { setChildName(''); setGrade(1); setTopicStars({}); setTotalStars(0); localStorage.removeItem(STORAGE_KEY); setScreen('welcome'); };
+
+      return (
+        <div className="app">
+          {screen === 'welcome' && <WelcomeScreen onStart={handleStart} />}
+          {screen === 'dashboard' && <Dashboard childName={childName} grade={grade} topicStars={topicStars} totalStars={totalStars} onSelectTopic={handleSelectTopic} onReset={handleResetProgress} />}
+          {screen === 'lesson' && <LessonView topicId={currentTopicId} currentSlide={currentSlide} setCurrentSlide={setCurrentSlide} onComplete={handleLessonComplete} onBack={handleBackToDashboard} childName={childName} />}
+          {screen === 'practice' && <PracticeProblems topicId={currentTopicId} onComplete={handlePracticeComplete} onBack={() => setScreen('lesson')} childName={childName} />}
+          {screen === 'quiz' && <QuizScreen topicId={currentTopicId} onComplete={handleQuizComplete} onBack={() => setScreen('practice')} childName={childName} />}
+          {screen === 'results' && <ResultsScreen topicId={currentTopicId} score={score} topicStars={topicStars} totalStars={totalStars} childName={childName} onBackToDashboard={handleBackToDashboard} onRetry={handleRetryTopic} />}
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>

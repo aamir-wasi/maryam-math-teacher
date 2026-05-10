@@ -1,0 +1,279 @@
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes bounce {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-18px); }
+}
+
+@keyframes wiggle {
+  0%, 100% { transform: rotate(0deg) scale(1); }
+  25% { transform: rotate(-8deg) scale(1.05); }
+  75% { transform: rotate(8deg) scale(1.05); }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.06); }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-50px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(50px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes starPop {
+  0% { transform: scale(0) rotate(-30deg); opacity: 0; }
+  60% { transform: scale(1.3) rotate(10deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+@keyframes confettiFall {
+  0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(-3deg); }
+  50% { transform: translateY(-10px) rotate(3deg); }
+}
+
+@keyframes glow {
+  0%, 100% { box-shadow: 0 0 20px rgba(255, 217, 61, 0.4); }
+  50% { box-shadow: 0 0 40px rgba(255, 217, 61, 0.8), 0 0 60px rgba(255, 217, 61, 0.4); }
+}
+
+/* ===== SHARED CARD STYLES ===== */
+.card {
+  background: white;
+  border-radius: 24px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+  padding: 2rem;
+  animation: fadeInUp 0.5s ease;
+}
+
+/* ===== SHARED BUTTON STYLES ===== */
+.btn-primary {
+  background: linear-gradient(135deg, #FFD93D, #FF6B35);
+  color: white;
+  font-size: 1.3rem;
+  font-weight: 800;
+  padding: 1rem 2.5rem;
+  border-radius: 50px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 20px rgba(255, 107, 53, 0.4);
+  text-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  animation: pulse 2s infinite;
+}
+
+.btn-primary:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 10px 30px rgba(255, 107, 53, 0.5);
+}
+
+.btn-primary:active {
+  transform: translateY(0px) scale(0.98);
+}
+
+.btn-secondary {
+  background: rgba(255,255,255,0.25);
+  color: white;
+  font-size: 1rem;
+  font-weight: 700;
+  padding: 0.7rem 1.8rem;
+  border-radius: 50px;
+  border: 2px solid rgba(255,255,255,0.5);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.btn-secondary:hover {
+  background: rgba(255,255,255,0.4);
+  transform: translateY(-2px);
+}
+
+.btn-success {
+  background: linear-gradient(135deg, #6BCB77, #4EA8DE);
+  color: white;
+  font-size: 1.2rem;
+  font-weight: 800;
+  padding: 0.9rem 2rem;
+  border-radius: 50px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 20px rgba(107, 203, 119, 0.4);
+}
+
+.btn-success:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(107, 203, 119, 0.5);
+}
+
+/* ===== MASCOT ===== */
+.mascot {
+  font-size: 5rem;
+  animation: bounce 2s ease-in-out infinite;
+  display: inline-block;
+  filter: drop-shadow(0 10px 20px rgba(0,0,0,0.2));
+}
+
+.mascot-small {
+  font-size: 2.5rem;
+  animation: float 3s ease-in-out infinite;
+  display: inline-block;
+}
+
+/* ===== SPEECH BUBBLE ===== */
+.speech-bubble {
+  background: white;
+  border-radius: 20px;
+  padding: 1.2rem 1.8rem;
+  position: relative;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+  animation: fadeInUp 0.5s ease;
+}
+
+.speech-bubble::before {
+  content: '';
+  position: absolute;
+  bottom: -20px;
+  left: 40px;
+  border: 12px solid transparent;
+  border-top-color: white;
+}
+
+/* ===== STAR DISPLAY ===== */
+.stars {
+  display: flex;
+  gap: 0.3rem;
+  justify-content: center;
+}
+
+.star {
+  font-size: 1.6rem;
+  transition: all 0.3s ease;
+}
+
+.star.earned {
+  animation: starPop 0.5s ease forwards;
+  filter: drop-shadow(0 3px 6px rgba(255, 200, 0, 0.6));
+}
+
+/* ===== PROGRESS BAR ===== */
+.progress-bar-container {
+  background: rgba(255,255,255,0.3);
+  border-radius: 50px;
+  height: 14px;
+  overflow: hidden;
+  width: 100%;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #FFD93D, #FF6B35);
+  border-radius: 50px;
+  transition: width 0.5s ease;
+  box-shadow: 0 0 10px rgba(255, 217, 61, 0.6);
+}
+
+/* ===== SCREEN HEADER ===== */
+.screen-header {
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(10px);
+  padding: 1rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255,255,255,0.2);
+}
+
+.screen-header h2 {
+  color: white;
+  font-size: 1.3rem;
+  font-weight: 800;
+}
+
+/* ===== FEEDBACK TOAST ===== */
+.feedback-toast {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 1rem 2rem;
+  border-radius: 50px;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: white;
+  z-index: 1000;
+  animation: fadeInDown 0.4s ease;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.feedback-toast.correct {
+  background: linear-gradient(135deg, #6BCB77, #4EA8DE);
+}
+
+.feedback-toast.incorrect {
+  background: linear-gradient(135deg, #FF6B6B, #FF8E53);
+}
+
+/* ===== CONFETTI ===== */
+.confetti-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9999;
+  overflow: hidden;
+}
+
+.confetti-piece {
+  position: absolute;
+  top: -20px;
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  animation: confettiFall linear forwards;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 600px) {
+  .mascot { font-size: 3.5rem; }
+  .btn-primary { font-size: 1.1rem; padding: 0.85rem 2rem; }
+  .card { padding: 1.5rem; }
+}
